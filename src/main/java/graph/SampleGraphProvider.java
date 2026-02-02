@@ -29,7 +29,6 @@ import docking.action.*;
 import docking.menu.ActionState;
 import docking.menu.MultiStateDockingAction;
 import docking.widgets.*;
-import graph.layout.SampleGraphPluginDependencyLayoutProvider;
 import graph.layout.SampleGraphFlowChartLayoutProvider;
 import ghidra.framework.plugintool.*;
 import ghidra.graph.viewer.*;

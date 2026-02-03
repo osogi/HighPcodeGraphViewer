@@ -67,12 +67,6 @@ public class SampleGraphPlugin extends ProgramPlugin {
 	}
 
 	@Override
-	protected void locationChanged(ProgramLocation loc) {
-		provider.locationChanged(loc);
-
-	}
-
-	@Override
 	protected void programDeactivated(Program program) {
 		provider.clear();
 

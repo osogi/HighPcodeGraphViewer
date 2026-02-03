@@ -121,8 +121,6 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 		view.setVertexFocusPathHighlightMode(PathHighlightMode.OUT);
 		view.setVertexHoverPathHighlightMode(PathHighlightMode.IN);
 
-		installTooltipProvider();
-
 		component = view.getViewComponent();
 
 		mainPanel = new JPanel(new BorderLayout());
@@ -130,71 +128,7 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 		mainPanel.add(component, BorderLayout.CENTER);
 	}
 
-	private void installTooltipProvider() {
-
-//		VertexTooltipProvider<SampleVertex, SampleEdge> tooltipProvider = new VertexTooltipProvider<>() {
-//
-//			@Override
-//			public JComponent getTooltip(SampleVertex v) {
-//				JToolTip tip = new JToolTip();
-//				tip.setTipText(getTooltipText(v, v.getName()));
-//				return tip;
-//			}
-//
-//			@Override
-//			public JComponent getTooltip(SampleVertex v, SampleEdge e) {
-//				boolean isStart = e.getStart() == v;
-//				String prefix;
-//				if (isStart) {
-//					prefix = "From: " + v.getName();
-//				} else {
-//					prefix = "To: " + v.getName();
-//				}
-//
-//				String text = getTooltipText(v, prefix);
-//				JToolTip tip = new JToolTip();
-//				tip.setTipText(text);
-//				return tip;
-//			}
-//
-//			@Override
-//			public String getTooltipText(SampleVertex v, MouseEvent e) {
-//				return getTooltipText(v, v.getName());
-//			}
-//
-//			private String getTooltipText(SampleVertex v, String title) {
-//				return "<html>" + title;// + "<br><hr><br>" + v.getText();
-//			}
-//		};
-//		view.setTooltipProvider(tooltipProvider);
-	}
-
 	private void buildGraph() {
-
-//		Map<Class<?>, SampleVertex> pluginToVertices = new HashMap<>();
-//
-//		List<Plugin> plugins = tool.getManagedPlugins();
-//		for (Plugin p : plugins) {
-//			SampleVertex vertex = new SampleVertex(p.getName());
-//			graph.addVertex(vertex);
-//			pluginToVertices.put(p.getClass(), vertex);
-//		}
-//
-//		for (Plugin p : plugins) {
-//			SampleVertex from = pluginToVertices.get(p.getClass());
-//
-//			StringBuilder names = new StringBuilder();
-//			List<Class<?>> dependencies = p.getPluginDescription().getServicesRequired();
-//			for (Class<?> serviceClass : dependencies) {
-//				SampleVertex to = locateService(pluginToVertices, serviceClass);
-//				if (to != null) {
-//					names.append(serviceClass.getSimpleName()).append('\n');
-//					graph.addEdge(new SampleEdge(from, to));
-//				}
-//			}
-//
-//			from.getTextArea().setText(names.toString());
-//		}
 		if (currentFunction != null) {
 			try {
 				graph = GraphFactory.createGraph(currentFunction, TaskMonitor.DUMMY);
@@ -210,47 +144,13 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 		return graph;
 	}
 
-	/* package */ VisualGraphViewUpdater<?, ?> getGraphViewUpdater() {
-		GraphViewer<SampleVertex, SampleEdge> viewer = view.getPrimaryGraphViewer();
-		VisualGraphViewUpdater<SampleVertex, SampleEdge> updater = viewer.getViewUpdater();
-		return updater;
-	}
-
 	@Override
 	public JComponent getComponent() {
 		return mainPanel;
 	}
 
 	private void createActions() {
-
 		addLayoutAction();
-	}
-
-	private SampleVertex prevSelect;
-
-	void locationChanged(ProgramLocation location) {
-		if (this.currentLocation == location)
-			return;
-
-		if (prevSelect != null)
-			prevSelect.setSelected(false);
-		
-		this.currentLocation = location;
-
-		Address currentAddress = currentLocation.getAddress();
-		
-		if (graph == null)
-			return;
-		
-		SampleVertex v = graph.getVertexForAddress(currentAddress);
-
-		if (v == null)
-			return;
-
-		v.setSelected(true);
-		v.selectByAddress(currentAddress);
-		prevSelect = v;
-		mainPanel.updateUI();
 	}
 
 	// Layouts
@@ -293,23 +193,9 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 	private void addLayoutProviders(
 			MultiStateDockingAction<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> layoutAction) {
 
-//		// Note: the first state set will be made the current selected value of the
-//		// multi action
-//		LayoutProvider<SampleVertex, SampleEdge, SampleGraph> provider = new SampleGraphPluginDependencyLayoutProvider();
-//		layoutAction.addActionState(new ActionState<>(provider.getLayoutName(), provider.getActionIcon(), provider));
-
 		LayoutProvider provider = new SampleGraphFlowChartLayoutProvider();
 		layoutAction.addActionState(new ActionState<>(provider.getLayoutName(), provider.getActionIcon(), provider));
 
-//		//
-//		// Add some Jung layouts for users to try
-//		//
-//		Set<JungLayoutProvider<SampleVertex, SampleEdge, SampleGraph>> jungLayouts = JungLayoutProviderFactory
-//				.createLayouts();
-//
-//		for (JungLayoutProvider<SampleVertex, SampleEdge, SampleGraph> l : jungLayouts) {
-//			layoutAction.addActionState(new ActionState<>(l.getLayoutName(), l.getActionIcon(), l));
-//		}
 	}
 
 	private class GraphFactory {
@@ -336,8 +222,6 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 
 			Collection<SampleEdge> edges = createdEdges(vertices, monitor);
 
-//			FunctionGraphVertexAttributes settings = new FunctionGraphVertexAttributes(controller.getProgram());
-
 			SampleGraph graph = new SampleGraph(function, vertices.values(), edges);
 
 			SampleVertex functionEntryVertex = graph.getVertexForAddress(function.getFunction().getEntryPoint());
@@ -347,10 +231,6 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 			}
 
 			graph.setRootVertex(functionEntryVertex);
-
-//			for (FGVertex vertex : vertices.values()) {
-//				vertex.setVertexType(getVertexType(graph, vertex));
-//			}
 
 			return graph;
 		}
@@ -390,18 +270,14 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 
 		private static BidiMap<PcodeBlockBasic, SampleVertex> createVertices(HighFunction hfunction,
 				TaskMonitor monitor) throws CancelledException {
-
 			BidiMap<PcodeBlockBasic, SampleVertex> vertices = new DualHashBidiMap<>();
 
 			ArrayList<PcodeBlockBasic> bbs = hfunction.getBasicBlocks();
 
 			Function fun = hfunction.getFunction();
-//			CodeBlockModel blockModel = new BasicBlockModel(SampleGraphProvider.this.currentProgram);
 
 			for (PcodeBlockBasic bb : bbs) {
 				Address adr = bb.getFirstOp().getSeqnum().getTarget();
-//				boolean isEntry = isEntry(blockModel.getCodeBlockAt(adr, monitor));
-
 				SampleVertex v = new SampleVertex(adr.toString(), bb);
 				vertices.put(bb, v);
 			}

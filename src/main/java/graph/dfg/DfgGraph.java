@@ -15,27 +15,25 @@
  */
 package graph.dfg;
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import ghidra.graph.graphs.FilteringVisualGraph;
+import ghidra.graph.graphs.DefaultVisualGraph;
 import ghidra.graph.viewer.layout.VisualGraphLayout;
-import graph.SampleVertex;
 
 /**
  * A graph for the {@link SampleGraphPlugin} that allows for filtering
  */
-public class DfgGraph extends FilteringVisualGraph<DfgVertex, DfgEdge> {
+public class DfgGraph extends DefaultVisualGraph<DfgVertex, DfgEdge> {
 
 	private VisualGraphLayout<DfgVertex, DfgEdge> layout;
 //	public List<DfgVertex> finVertices; // leafs, pcode without output; varnode without use in this bb;
 	
 	public List<DfgVertex> getFinVertices() {
 		List<DfgVertex> res = new LinkedList<>();
-		Iterator<DfgVertex> verts = this.getAllVertices();
-		while (verts.hasNext()) {
-			DfgVertex v = verts.next();
+		Collection<DfgVertex> verts = this.getVertices();
+		for (DfgVertex v :verts) {
 			if(this.getOutEdges(v).size() == 0) {
 				res.add(v);
 			}
@@ -63,7 +61,7 @@ public class DfgGraph extends FilteringVisualGraph<DfgVertex, DfgEdge> {
 		return newGraph;
 	}
 
-	void setLayout(VisualGraphLayout<DfgVertex, DfgEdge> layout) {
+	public void setLayout(VisualGraphLayout<DfgVertex, DfgEdge> layout) {
 		this.layout = layout;
 	}
 }

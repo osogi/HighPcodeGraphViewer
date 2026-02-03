@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package graph.dfg;
+package graph;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -36,7 +36,9 @@ import docking.GenericHeader;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.renderers.Renderer.EdgeLabel;
 import generic.theme.GColor;
+import ghidra.graph.VisualGraph;
 import ghidra.graph.viewer.GraphViewer;
+import ghidra.graph.viewer.VisualEdge;
 import ghidra.graph.viewer.VisualGraphView;
 import ghidra.graph.viewer.VisualVertex;
 import ghidra.graph.viewer.layout.JungLayoutProvider;
@@ -55,113 +57,30 @@ import ghidra.program.model.pcode.Varnode;
 import ghidra.util.MathUtilities;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
-import graph.SampleEdge;
-import graph.SampleGraph;
-import graph.SampleVertex;
+import graph.dfg.DfgEdge;
+import graph.dfg.DfgGraph;
+import graph.dfg.DfgVertex;
+import graph.dfg.PcodeVertex;
+import graph.dfg.VarnodeVertex;
 import graph.dfg.DfgVertex.VertexType;
 import graph.layout.DfgLayoutProvider;
 
-public class CfgVertex extends AbstractVisualVertex {
+public class GraphViewVisualVertex<V extends VisualVertex, E extends VisualEdge<V>, G extends VisualGraph<V, E>>
+		extends AbstractVisualVertex {
 
 	private JPanel mainPanel = new JPanel(new BorderLayout());
-	LayoutProvider<DfgVertex, DfgEdge, DfgGraph> lp = new DfgLayoutProvider();
-
-	private VisualGraphView<DfgVertex, DfgEdge, DfgGraph> graphView;
-	private DfgGraph graph;
-
 	private JComponent workingArea;
 	private GenericHeader genericHeader;
 	private String name;
-	private PcodeBlockBasic hBasicBlock;
 
+	protected VisualGraphView<V, E, G> graphView;
 	private int maxWidth = 200; // something reasonable
 
-	private void buildGraph() {
-		graph = new DfgGraph();
-
-		Iterator<PcodeOp> pcodes = hBasicBlock.getIterator();
-		Map<Varnode, DfgVertex> varVerts = new HashMap<>();
-
-		while (pcodes.hasNext()) {
-			PcodeOp pcode = pcodes.next();
-
-			DfgVertex pVert = new PcodeVertex(pcode.getMnemonic(), pcode);
-			graph.addVertex(pVert);
-
-			Integer i = 0;
-			for (Varnode vi : pcode.getInputs()) {
-				DfgVertex viVert = varVerts.get(vi);
-				if (viVert == null) {
-					viVert = new VarnodeVertex(vi.toString(), vi);
-					varVerts.put(vi, viVert);
-				}
-
-				graph.addVertex(viVert);
-				graph.addEdge(new DfgEdge(viVert, pVert, i++));
-			}
-
-			Varnode vo = pcode.getOutput();
-			if (vo != null) {
-				DfgVertex voVert = varVerts.get(vo);
-				if (voVert == null) {
-					voVert = new VarnodeVertex(vo.toString(), vo);
-					varVerts.put(vo, voVert);
-				}
-				graph.addVertex(voVert);
-				graph.addEdge(new DfgEdge(pVert, voVert, null));
-			}
-		}
-
-		try {
-			VisualGraphLayout<DfgVertex, DfgEdge> l = lp.getLayout(graph, TaskMonitor.DUMMY);
-			EdgeLabel<DfgVertex, DfgEdge> p = l.getEdgeLabelRenderer();
-			graph.setLayout(l);
-		} catch (CancelledException e) {
-			// can't happen as long as we are using the dummy monitor
-		}
-	}
-
-	private void setupRender() {
-		GraphViewer<DfgVertex, DfgEdge> viewer = graphView.getPrimaryGraphViewer();
-
-		RenderContext<DfgVertex, DfgEdge> renderContext = viewer.getRenderContext();
-		com.google.common.base.Function<DfgEdge, String> edgeLabelTransformer = e -> e.getLabel();
-		renderContext.setEdgeLabelTransformer(edgeLabelTransformer);
-
-//		VisualGraphEdgeLabelRenderer edgeLabelRenderer = new VisualGraphEdgeLabelRenderer(
-//				new GColor("color.black"));
-//		edgeLabelRenderer.setNonPickedForegroundColor(new GColor("color.black"));
-//		edgeLabelRenderer.setRotateEdgeLabels(false);
-//		renderContext.setEdgeLabelRenderer(edgeLabelRenderer);
-		
-	}
-
-	public CfgVertex(String name, PcodeBlockBasic hbb) {
+	public GraphViewVisualVertex(String name, VisualGraphView<V, E, G> graphView) {
 		this.name = name;
-		hBasicBlock = hbb;
-
-		buildGraph();
-
-		graphView = new VisualGraphView<>();
-
-
-		graphView.setLayoutProvider(lp);
-		graphView.setGraph(graph);
+		this.graphView = graphView;
 		
-		setupRender();
-
 		workingArea = graphView.getViewComponent();
-
-//				new JTextArea() {
-//			// overridden to cap the width
-//			@Override
-//			public Dimension getPreferredSize() {
-//				Dimension preferredSize = super.getPreferredSize();
-//				int width = preferredSize.width;
-//				preferredSize.width = MathUtilities.clamp(width, width, maxWidth);
-//				return preferredSize;
-//			}
-//		};
 		workingArea.setPreferredSize(new Dimension(200, 50));
 		workingArea.setBackground(new GColor("color.bg.visualgraph.dockingvertex"));
 		workingArea.setForeground(new GColor("color.fg.visualgraph.dockingvertex"));
@@ -244,10 +163,6 @@ public class CfgVertex extends AbstractVisualVertex {
 		return workingArea;
 	}
 
-//	public String getText() {
-//		return workingArea.getText();
-//	}
-
 	public String getName() {
 		return name;
 	}
@@ -255,12 +170,6 @@ public class CfgVertex extends AbstractVisualVertex {
 	public void setMaxWidth(int width) {
 		this.maxWidth = width;
 	}
-
-//	@Override
-//	public void setFocused(boolean focused) {
-//		super.setFocused(focused);
-//		workingArea.getCaret().setVisible(focused);
-//	}
 
 	@Override
 	public void setSelected(boolean selected) {
@@ -297,7 +206,7 @@ public class CfgVertex extends AbstractVisualVertex {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		CfgVertex other = (CfgVertex) obj;
+		GraphViewVisualVertex<V, E, G> other = (GraphViewVisualVertex<V, E, G>) obj;
 		if (name == null) {
 			if (other.name != null) {
 				return false;

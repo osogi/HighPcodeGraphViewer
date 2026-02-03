@@ -15,6 +15,10 @@
  */
 package graph.dfg;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import ghidra.graph.graphs.FilteringVisualGraph;
 import ghidra.graph.viewer.layout.VisualGraphLayout;
 import graph.SampleVertex;
@@ -25,14 +29,18 @@ import graph.SampleVertex;
 public class DfgGraph extends FilteringVisualGraph<DfgVertex, DfgEdge> {
 
 	private VisualGraphLayout<DfgVertex, DfgEdge> layout;
-	private DfgVertex rootVertex;
+//	public List<DfgVertex> finVertices; // leafs, pcode without output; varnode without use in this bb;
 	
-	public DfgVertex getRootVertex() {
-		return rootVertex;
-	}
-
-	public void setRootVertex(DfgVertex v) {
-		rootVertex = v;
+	public List<DfgVertex> getFinVertices() {
+		List<DfgVertex> res = new LinkedList<>();
+		Iterator<DfgVertex> verts = this.getAllVertices();
+		while (verts.hasNext()) {
+			DfgVertex v = verts.next();
+			if(this.getOutEdges(v).size() == 0) {
+				res.add(v);
+			}
+		}
+		return res;
 	}
 	
 	@Override

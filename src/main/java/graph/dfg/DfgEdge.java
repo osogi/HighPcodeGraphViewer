@@ -22,9 +22,15 @@ import ghidra.graph.viewer.edge.AbstractVisualEdge;
  */
 public class DfgEdge extends AbstractVisualEdge<DfgVertex> {
 
-	
 	private Integer argNum;
-	
+
+	public Integer getArgnum() {
+		if (argNum != null)
+			return argNum;
+
+		return -1;
+	}
+
 	public DfgEdge(DfgVertex start, DfgVertex end, Integer number) {
 		super(start, end);
 		argNum = number;
@@ -41,8 +47,8 @@ public class DfgEdge extends AbstractVisualEdge<DfgVertex> {
 		if (argNum != null) {
 			return argNum.toString();
 		}
-		
+
 		return null;
-		
+
 	}
 }

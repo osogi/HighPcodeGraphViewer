@@ -85,14 +85,14 @@ public class CfgVertex extends AbstractVisualVertex {
 		while (pcodes.hasNext()) {
 			PcodeOp pcode = pcodes.next();
 
-			DfgVertex pVert = new DfgVertex(pcode.getMnemonic(), VertexType.PCODE);
+			DfgVertex pVert = new PcodeVertex(pcode.getMnemonic(), pcode);
 			graph.addVertex(pVert);
 
 			Integer i = 0;
 			for (Varnode vi : pcode.getInputs()) {
 				DfgVertex viVert = varVerts.get(vi);
 				if (viVert == null) {
-					viVert = new DfgVertex(vi.toString(), VertexType.VARNODE);
+					viVert = new VarnodeVertex(vi.toString(), vi);
 					varVerts.put(vi, viVert);
 				}
 
@@ -104,14 +104,12 @@ public class CfgVertex extends AbstractVisualVertex {
 			if (vo != null) {
 				DfgVertex voVert = varVerts.get(vo);
 				if (voVert == null) {
-					voVert = new DfgVertex(vo.toString(), VertexType.VARNODE);
+					voVert = new VarnodeVertex(vo.toString(), vo);
 					varVerts.put(vo, voVert);
 				}
 				graph.addVertex(voVert);
 				graph.addEdge(new DfgEdge(pVert, voVert, null));
 			}
-
-			graph.setRootVertex(pVert);
 		}
 
 		try {

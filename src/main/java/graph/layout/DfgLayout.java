@@ -16,6 +16,7 @@
 package graph.layout;
 
 import java.util.Comparator;
+import java.util.List;
 
 import edu.uci.ics.jung.visualization.renderers.Renderer.EdgeLabel;
 import generic.theme.GColor;
@@ -32,7 +33,7 @@ import ghidra.app.plugin.core.functiongraph.graph.layout.flowchart.AbstractFlowC
  * A {@link DfgGraphPlugin} layout that can be used to apply existing Jung
  * layouts.
  */
-public class DfgLayout extends AbstractFlowChartLayout<DfgVertex, DfgEdge> {
+public class DfgLayout extends AbstractReverseFlowChartLayout<DfgVertex, DfgEdge> {
 
 	public DfgLayout(DfgGraph graph) {
 		super(graph, new _DfgEdgeComp(), false);
@@ -41,25 +42,24 @@ public class DfgLayout extends AbstractFlowChartLayout<DfgVertex, DfgEdge> {
 	private static class _DfgEdgeComp implements Comparator<DfgEdge> {
 		@Override
 		public int compare(DfgEdge e1, DfgEdge e2) {
-			return 0;
+			return e1.getArgnum().compareTo(e2.getArgnum());
 		}
 	}
 
 	@Override
-	protected DfgVertex getRoot(VisualGraph<DfgVertex, DfgEdge> g) {
+	protected List<DfgVertex> getRoots(VisualGraph<DfgVertex, DfgEdge> g) {
 		if (g instanceof DfgGraph dg)
-			return dg.getRootVertex();
+			return dg.getFinVertices();
 		return null;
 	}
 
 	@Override
-	public AbstractVisualGraphLayout<DfgVertex, DfgEdge> createClonedLayout(
-			VisualGraph<DfgVertex, DfgEdge> newGraph) {
+	public AbstractVisualGraphLayout<DfgVertex, DfgEdge> createClonedLayout(VisualGraph<DfgVertex, DfgEdge> newGraph) {
 		return new DfgLayout((DfgGraph) newGraph);
 	}
-	
+
 	@Override
 	public EdgeLabel<DfgVertex, DfgEdge> getEdgeLabelRenderer() {
-		return  new DfgLabelRender<>(1);
+		return new DfgLabelRender<>(1);
 	}
 }

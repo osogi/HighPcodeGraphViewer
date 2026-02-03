@@ -34,13 +34,15 @@ import ghidra.graph.viewer.vertex.DockingVisualVertex;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.pcode.PcodeBlockBasic;
 import ghidra.program.model.pcode.PcodeOpAST;
+import graph.dfg.CfgVertex;
+import graph.dfg.DfgVertex;
 import ghidra.program.model.pcode.PcodeOp;
 
 
 /**
  * A vertex for the {@link SampleGraphPlugin}
  */
-public class SampleVertex extends DockingVisualVertex {
+public class SampleVertex extends CfgVertex {
 	
 //	public boolean isEntry = false;
 	public PcodeBlockBasic hBasicBlock;
@@ -86,11 +88,11 @@ public class SampleVertex extends DockingVisualVertex {
 	}
 	
 	public SampleVertex(String name, PcodeBlockBasic hbb) {
-		super(name);
+		super(name, hbb);
 		hBasicBlock = hbb;
 		myPainter = new DefaultHighlighter.DefaultHighlightPainter(java.awt.Color.YELLOW);
 		
-		setupTextArea(getTextArea());
+//		setupTextArea(getTextArea());
 	}
 
 	private void highlighString(JTextArea textArea, int target) {
@@ -108,20 +110,20 @@ public class SampleVertex extends DockingVisualVertex {
 	}
 		
 	public void selectByAddress(Address currentAddress) {
-		JTextArea textArea = getTextArea();
-
-		DefaultHighlighter highlighter = (DefaultHighlighter) textArea.getHighlighter();
-		highlighter.setDrawsLayeredHighlights(false);
-		
-		highlighter.removeAllHighlights();
-		
-		Set<Integer> s = addressLineNumberMap.get(currentAddress);
-		if (s == null)
-			return;
-		
-		for (int i : s) {
-			highlighString(textArea, i);
-		}
+//		JTextArea textArea = getTextArea();
+//
+//		DefaultHighlighter highlighter = (DefaultHighlighter) textArea.getHighlighter();
+//		highlighter.setDrawsLayeredHighlights(false);
+//		
+//		highlighter.removeAllHighlights();
+//		
+//		Set<Integer> s = addressLineNumberMap.get(currentAddress);
+//		if (s == null)
+//			return;
+//		
+//		for (int i : s) {
+//			highlighString(textArea, i);
+//		}
 	}
 	
 	@Override
@@ -134,9 +136,9 @@ public class SampleVertex extends DockingVisualVertex {
 	}
 	
 	public void selectClean() {
-		JTextArea textArea = getTextArea();
-		DefaultHighlighter highlighter = (DefaultHighlighter) textArea.getHighlighter();
-		highlighter.removeAllHighlights();
+//		JTextArea textArea = getTextArea();
+//		DefaultHighlighter highlighter = (DefaultHighlighter) textArea.getHighlighter();
+//		highlighter.removeAllHighlights();
 	}
 
 }

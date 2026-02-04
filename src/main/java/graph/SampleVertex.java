@@ -36,9 +36,13 @@ import ghidra.graph.viewer.layout.LayoutProvider;
 import ghidra.graph.viewer.layout.VisualGraphLayout;
 import ghidra.graph.viewer.vertex.DockingVisualVertex;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressRange;
+import ghidra.program.model.address.AddressRangeImpl;
+import ghidra.program.model.address.AddressSet;
 import ghidra.program.model.pcode.PcodeBlockBasic;
 import ghidra.program.model.pcode.PcodeOpAST;
 import ghidra.program.model.pcode.Varnode;
+import ghidra.program.util.ProgramSelection;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
 import graph.dfg.DfgEdge;
@@ -52,10 +56,13 @@ import ghidra.program.model.pcode.PcodeOp;
 /**
  * A vertex for the {@link SampleGraphPlugin}
  */
-public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgGraph> {
+public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgGraph>
+		implements Comparable<SampleVertex> {
 	private DfgGraph graph;
 
 	public PcodeBlockBasic hBasicBlock;
+	public Address startAddress;
+	public Address endAddress;
 
 	private static DfgGraph buildGraph(PcodeBlockBasic hBasicBlock) {
 		DfgGraph graph = new DfgGraph();
@@ -103,7 +110,7 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		com.google.common.base.Function<DfgEdge, String> edgeLabelTransformer = e -> e.getLabel();
 		renderContext.setEdgeLabelTransformer(edgeLabelTransformer);
 	}
-	
+
 	private static VisualGraphView<DfgVertex, DfgEdge, DfgGraph> buildGraphView(PcodeBlockBasic hBasicBlock) {
 		VisualGraphView<DfgVertex, DfgEdge, DfgGraph> graphView = new VisualGraphView<>();
 
@@ -125,14 +132,39 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		return graphView;
 	}
 
-
-
 	public SampleVertex(String name, PcodeBlockBasic hbb) {
 		super(name, buildGraphView(hbb));
 		hBasicBlock = hbb;
 		graph = graphView.getVisualGraph();
+		startAddress = hBasicBlock.getStart();
+		endAddress = hBasicBlock.getStop();
+	}
 
-//		setupTextArea(getTextArea());
+	@Override
+	public int compareTo(SampleVertex other) {
+		return startAddress.compareTo(other.startAddress);
+	}
+	
+	@Override
+	public void setSelected(boolean selected) {
+		super.setSelected(selected);
+		if (selected == false) {
+			graph.clearSelectedVertices();
+		}
+	}
+	
+
+	public void selectionChanged(ProgramSelection sel) {
+		Iterator<AddressRange> subSel = sel.intersectRange(startAddress, endAddress).iterator();
+
+		HashSet<DfgVertex> verts = new HashSet<>();
+
+		while (subSel.hasNext()) {
+			AddressRange r = subSel.next();
+			verts.addAll(graph.getVerticesForRange(r));
+		}
+
+		graphView.getGraphComponent().setVerticesSelected(verts);
 	}
 
 }

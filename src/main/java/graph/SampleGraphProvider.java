@@ -34,6 +34,7 @@ import ghidra.framework.plugintool.*;
 import ghidra.graph.viewer.*;
 import ghidra.graph.viewer.layout.*;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressRange;
 import ghidra.program.model.block.BasicBlockModel;
 import ghidra.program.model.block.CodeBlock;
 import ghidra.program.model.block.CodeBlockModel;
@@ -43,6 +44,7 @@ import ghidra.program.model.listing.Program;
 import ghidra.program.model.pcode.HighFunction;
 import ghidra.program.model.pcode.PcodeBlockBasic;
 import ghidra.program.util.ProgramLocation;
+import ghidra.program.util.ProgramSelection;
 import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
 
@@ -286,6 +288,21 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 
 		}
 
+	}
+
+	public void selectionChanged(ProgramSelection sel) {
+		if (sel == null)
+			return;
+		
+		HashSet<SampleVertex> verts = new HashSet<>();
+		for (AddressRange r : sel.getAddressRanges()) {
+			verts.addAll(graph.getVerticesForRange(r));
+		}
+
+		view.getGraphComponent().setVerticesSelected(verts);
+		for (SampleVertex v : verts) {
+			v.selectionChanged(sel);
+		}
 	}
 
 }

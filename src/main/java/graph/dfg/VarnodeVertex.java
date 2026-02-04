@@ -1,5 +1,13 @@
 package graph.dfg;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import ghidra.program.model.address.Address;
+import ghidra.program.model.pcode.PcodeOp;
 import ghidra.program.model.pcode.Varnode;
 
 public class VarnodeVertex extends DfgVertex {
@@ -10,6 +18,17 @@ public class VarnodeVertex extends DfgVertex {
 		vn = varnode;
 	}
 
+	@Override
+	public Collection<Address> getAssociatedAddresses() {
+		List <Address> res = new LinkedList<>();
+		
+		Iterator<PcodeOp> pcodes = vn.getDescendants();
+		while (pcodes.hasNext()) {
+			res.add(pcodes.next().getSeqnum().getTarget());
+		}
+		
+		return res;
+	}
 	
 	@Override
 	public int hashCode() {

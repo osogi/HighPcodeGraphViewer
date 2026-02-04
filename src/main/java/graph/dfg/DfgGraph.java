@@ -15,12 +15,19 @@
  */
 package graph.dfg;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.TreeMap;
 
 import ghidra.graph.graphs.DefaultVisualGraph;
 import ghidra.graph.viewer.layout.VisualGraphLayout;
+import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressRange;
+import graph.SampleVertex;
 
 /**
  * A graph for the {@link SampleGraphPlugin} that allows for filtering
@@ -28,19 +35,52 @@ import ghidra.graph.viewer.layout.VisualGraphLayout;
 public class DfgGraph extends DefaultVisualGraph<DfgVertex, DfgEdge> {
 
 	private VisualGraphLayout<DfgVertex, DfgEdge> layout;
-//	public List<DfgVertex> finVertices; // leafs, pcode without output; varnode without use in this bb;
+	TreeMap<Address, List<DfgVertex>> sortedVertices = new TreeMap<>();
+
+	@Override
+	protected void verticesAdded(Collection<DfgVertex> added) {
+		super.verticesAdded(added);
+		for (DfgVertex v : added) {
+			for (Address addr : v.getAssociatedAddresses()) {
+				sortedVertices.computeIfAbsent(addr, k -> new ArrayList<>()).add(v);
+			}
+		}
+	}
+
+	@Override
+	protected void verticesRemoved(Collection<DfgVertex> removed) {
+		super.verticesRemoved(removed);
+		for (DfgVertex v : removed) {
+			for (Address addr : v.getAssociatedAddresses()) {
+				List<DfgVertex> tmp = sortedVertices.get(addr);
+				if (tmp != null) {
+					tmp.remove(v);
+				}
+			}
+		}
+	}
 	
-	public List<DfgVertex> getFinVertices() {
+	public HashSet<DfgVertex> getVerticesForRange(AddressRange addrRange) {
+		Collection<List<DfgVertex>> lists = sortedVertices.subMap(addrRange.getMinAddress(), true, addrRange.getMaxAddress(), true).values();
+
+		HashSet<DfgVertex> res = new HashSet<>();
+		for (List<DfgVertex> list : lists) {
+			res.addAll(list);
+		}
+		return res;
+	}
+
+	public List<DfgVertex> getFinVertices() { // leafs, pcode without output; varnode without use in this bb;
 		List<DfgVertex> res = new LinkedList<>();
 		Collection<DfgVertex> verts = this.getVertices();
-		for (DfgVertex v :verts) {
-			if(this.getOutEdges(v).size() == 0) {
+		for (DfgVertex v : verts) {
+			if (this.getOutEdges(v).size() == 0) {
 				res.add(v);
 			}
 		}
 		return res;
 	}
-	
+
 	@Override
 	public VisualGraphLayout<DfgVertex, DfgEdge> getLayout() {
 		return layout;

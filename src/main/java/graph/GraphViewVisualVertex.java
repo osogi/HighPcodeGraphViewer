@@ -217,4 +217,5 @@ public class GraphViewVisualVertex<V extends VisualVertex, E extends VisualEdge<
 		return true;
 	}
 
+
 }

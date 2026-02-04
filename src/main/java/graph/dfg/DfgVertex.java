@@ -15,8 +15,12 @@
  */
 package graph.dfg;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import generic.theme.GColor;
 import ghidra.graph.viewer.vertex.DockingVisualVertex;
+import ghidra.program.model.address.Address;
 
 /**
  * A vertex for the {@link SampleGraphPlugin}
@@ -26,9 +30,12 @@ public class DfgVertex extends DockingVisualVertex {
 	public enum VertexType{
 		VARNODE, PCODE
 	}
-	
+		
 	public VertexType vertexType;
 	
+	public Collection<Address> getAssociatedAddresses() {
+		return Collections.emptyList();
+	}
 	
 	public DfgVertex(String name, VertexType vt) {
 		super(name);

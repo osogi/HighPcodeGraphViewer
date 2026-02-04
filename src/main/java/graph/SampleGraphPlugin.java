@@ -23,6 +23,7 @@ import ghidra.framework.plugintool.*;
 import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.program.model.listing.Program;
 import ghidra.program.util.ProgramLocation;
+import ghidra.program.util.ProgramSelection;
 import ghidra.util.HelpLocation;
 
 /**
@@ -67,9 +68,13 @@ public class SampleGraphPlugin extends ProgramPlugin {
 	}
 
 	@Override
+	protected void selectionChanged(ProgramSelection sel) {
+		provider.selectionChanged(sel);
+	}
+	
+	@Override
 	protected void programDeactivated(Program program) {
 		provider.clear();
-
 	}
 
 	@Override

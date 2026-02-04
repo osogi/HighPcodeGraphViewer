@@ -17,11 +17,18 @@ package graph;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
+import datastructures.Interval;
+import datastructures.IntervalTree;
 import ghidra.graph.graphs.DefaultVisualGraph;
 import ghidra.graph.viewer.layout.VisualGraphLayout;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressRange;
 import ghidra.program.model.pcode.HighFunction;
 
 /**
@@ -41,8 +48,58 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 		rootVertex = v;
 	}
 
+	private class VertexIntrerval implements Interval {
+
+		private long start;
+		private long end;
+		public SampleVertex vert;
+
+		public VertexIntrerval(SampleVertex v) {
+			super();
+			start = v.startAddress.getUnsignedOffset();
+			end = v.endAddress.getUnsignedOffset() + 1;
+			vert = v;
+		}
+
+		public VertexIntrerval(long s, long e) {
+			super();
+			start = s;
+			end = e + 1;
+		}
+
+		@Override
+		public long start() {
+			return start;
+		}
+
+		@Override
+		public long end() {
+			return end;
+		}
+
+	}
+
+	IntervalTree<VertexIntrerval> sortedVertices;
+
+	@Override
+	protected void verticesAdded(Collection<SampleVertex> added) {
+		super.verticesAdded(added);
+		for (SampleVertex v : added) {
+			sortedVertices.insert(new VertexIntrerval(v));
+		}
+	}
+
+	@Override
+	protected void verticesRemoved(Collection<SampleVertex> removed) {
+		super.verticesRemoved(removed);
+		for (SampleVertex v : removed) {
+			sortedVertices.delete(new VertexIntrerval(v));
+		}
+	}
+
 	public SampleGraph(HighFunction function, Set<SampleVertex> pvertices, Collection<SampleEdge> pedges) {
 		super();
+		sortedVertices = new IntervalTree<>();
 
 		for (SampleVertex v : pvertices) {
 			addVertex(v);
@@ -84,6 +141,17 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 		}
 
 		return null;
+	}
+
+	public HashSet<SampleVertex> getVerticesForRange(AddressRange addrRange) {
+		Iterator<VertexIntrerval> it = sortedVertices.overlappers(new VertexIntrerval(
+				addrRange.getMinAddress().getUnsignedOffset(), addrRange.getMaxAddress().getUnsignedOffset()));
+
+		HashSet<SampleVertex> res = new HashSet<>();
+		while (it.hasNext()) {
+			res.add(it.next().vert);
+		}
+		return res;
 	}
 
 	@Override

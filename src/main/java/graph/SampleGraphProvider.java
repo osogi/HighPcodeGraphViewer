@@ -291,6 +291,8 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 	}
 
 	public void selectionChanged(ProgramSelection sel) {
+		if (graph == null)
+			return;
 
 		HashSet<SampleVertex> verts = new HashSet<>();
 		if (sel != null) {
@@ -299,10 +301,10 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 			}
 		}
 
+		verts.removeIf(v -> !v.selectionChanged(sel));
+		verts.forEach(v -> v.setForceSelection(true));
 		view.getGraphComponent().setVerticesSelected(verts);
-		for (SampleVertex v : verts) {
-			v.selectionChanged(sel);
-		}
+		verts.forEach(v -> v.setForceSelection(false));
 	}
 
 }

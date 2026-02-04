@@ -145,16 +145,25 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		return startAddress.compareTo(other.startAddress);
 	}
 	
+	private boolean forceSelection;
+	public void setForceSelection(boolean value) {
+		forceSelection = value;
+	}
+	
 	@Override
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
-		if (selected == false) {
+		if ((selected == false) && (!forceSelection)) {
 			graph.clearSelectedVertices();
 		}
 	}
 	
-
-	public void selectionChanged(ProgramSelection sel) {
+	/**
+	 *
+	 * @param sel
+	 * @return is any inner vertices selected
+	 */
+	public boolean selectionChanged(ProgramSelection sel) {
 		Iterator<AddressRange> subSel = sel.intersectRange(startAddress, endAddress).iterator();
 
 		HashSet<DfgVertex> verts = new HashSet<>();
@@ -165,6 +174,8 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		}
 
 		graphView.getGraphComponent().setVerticesSelected(verts);
+		
+		return !verts.isEmpty();
 	}
 
 	

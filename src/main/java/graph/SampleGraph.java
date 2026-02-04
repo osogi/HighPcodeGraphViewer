@@ -77,7 +77,25 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 		public long end() {
 			return end;
 		}
+		
+	    @Override
+	    public boolean equals(Object obj) {
+	        if (obj == null) {
+	            return false;
+	        }
 
+	        if (obj.getClass() != this.getClass()) {
+	            return false;
+	        }
+
+	        VertexIntrerval other = (VertexIntrerval) obj;
+	        if (vert == null) {
+				if (other.vert != null) {
+					return false;
+				}
+			}
+			return vert.equals(other.vert);
+	    }
 	}
 
 	IntervalSetTree<VertexIntrerval> sortedVertices;

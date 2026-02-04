@@ -21,11 +21,12 @@ public class VarnodeVertex extends DfgVertex {
 	@Override
 	public Collection<Address> getAssociatedAddresses() {
 		List <Address> res = new LinkedList<>();
-		
-		Iterator<PcodeOp> pcodes = vn.getDescendants();
-		while (pcodes.hasNext()) {
-			res.add(pcodes.next().getSeqnum().getTarget());
-		}
+
+		// Highlighting varnodes gives more problem than value
+//		Iterator<PcodeOp> pcodes = vn.getDescendants();
+//		while (pcodes.hasNext()) {
+//			res.add(pcodes.next().getSeqnum().getTarget());
+//		}
 		
 		return res;
 	}

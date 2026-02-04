@@ -291,12 +291,12 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 	}
 
 	public void selectionChanged(ProgramSelection sel) {
-		if (sel == null)
-			return;
-		
+
 		HashSet<SampleVertex> verts = new HashSet<>();
-		for (AddressRange r : sel.getAddressRanges()) {
-			verts.addAll(graph.getVerticesForRange(r));
+		if (sel != null) {
+			for (AddressRange r : sel.getAddressRanges()) {
+				verts.addAll(graph.getVerticesForRange(r));
+			}
 		}
 
 		view.getGraphComponent().setVerticesSelected(verts);

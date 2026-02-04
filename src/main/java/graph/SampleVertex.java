@@ -167,4 +167,35 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		graphView.getGraphComponent().setVerticesSelected(verts);
 	}
 
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((hBasicBlock == null) ? 0 : hBasicBlock.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		SampleVertex other = (SampleVertex) obj;
+		if (hBasicBlock == null) {
+			if (other.hBasicBlock != null) {
+				return false;
+			}
+		}
+		else if (!hBasicBlock.equals(other.hBasicBlock)) {
+			return false;
+		}
+		return true;
+	}
 }

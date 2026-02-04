@@ -47,6 +47,5 @@ public class DfgVertex extends DockingVisualVertex {
 		}else if (vt == VertexType.PCODE) {
 			getTextArea().setBackground(new GColor("color.graph.dfg.pcode"));
 		}
-		
 	}
 }

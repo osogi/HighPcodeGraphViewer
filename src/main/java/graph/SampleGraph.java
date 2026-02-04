@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import datastructures.Interval;
+import datastructures.IntervalSetTree;
 import datastructures.IntervalTree;
 import ghidra.graph.graphs.DefaultVisualGraph;
 import ghidra.graph.viewer.layout.VisualGraphLayout;
@@ -79,7 +80,7 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 
 	}
 
-	IntervalTree<VertexIntrerval> sortedVertices;
+	IntervalSetTree<VertexIntrerval> sortedVertices;
 
 	@Override
 	protected void verticesAdded(Collection<SampleVertex> added) {
@@ -99,7 +100,7 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 
 	public SampleGraph(HighFunction function, Set<SampleVertex> pvertices, Collection<SampleEdge> pedges) {
 		super();
-		sortedVertices = new IntervalTree<>();
+		sortedVertices = new IntervalSetTree<>();
 
 		for (SampleVertex v : pvertices) {
 			addVertex(v);

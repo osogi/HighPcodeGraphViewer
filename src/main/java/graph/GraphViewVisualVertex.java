@@ -139,6 +139,15 @@ public class GraphViewVisualVertex<V extends VisualVertex, E extends VisualEdge<
 			public void keyPressed(KeyEvent e) {
 				KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 				kfm.redispatchEvent(workingArea, e);
+
+				if (e.getKeyCode() == KeyEvent.VK_EQUALS) {
+					graphView.zoomInGraph();
+				}
+
+				if (e.getKeyCode() == KeyEvent.VK_MINUS) {
+					graphView.zoomOutGraph();
+				}
+
 				e.consume(); // consume all events; signal that our text area will handle them
 			}
 		});

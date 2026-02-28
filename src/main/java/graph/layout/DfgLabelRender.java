@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,10 +30,7 @@ import edu.uci.ics.jung.visualization.*;
 import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
-import ghidra.app.plugin.core.functiongraph.graph.FGEdge;
-import ghidra.app.plugin.core.functiongraph.graph.vertex.FGVertex;
 import ghidra.graph.viewer.vertex.VisualGraphVertexShapeTransformer;
-import ghidra.program.model.symbol.FlowType;
 import graph.dfg.DfgEdge;
 import graph.dfg.DfgVertex;
 
@@ -47,7 +44,8 @@ class DfgLabelRender<V extends DfgVertex, E extends DfgEdge> implements Renderer
 
 	private static final int DEFAULT_EDGE_OFFSET = 20;
 
-	private VisualGraphVertexShapeTransformer<V> vertexShapeTransformer = new VisualGraphVertexShapeTransformer<>();
+	private VisualGraphVertexShapeTransformer<V> vertexShapeTransformer =
+		new VisualGraphVertexShapeTransformer<>();
 
 	private double edgeOffset;
 
@@ -68,8 +66,8 @@ class DfgLabelRender<V extends DfgVertex, E extends DfgEdge> implements Renderer
 		V endv = endpoints.getSecond();
 
 		Predicate<Context<Graph<V, E>, V>> includeVertex = rc.getVertexIncludePredicate();
-		if (!includeVertex.apply(Context.getInstance(jungGraph, startv))
-				|| !includeVertex.apply(Context.getInstance(jungGraph, endv))) {
+		if (!includeVertex.apply(Context.getInstance(jungGraph, startv)) ||
+			!includeVertex.apply(Context.getInstance(jungGraph, endv))) {
 			return;
 		}
 
@@ -87,22 +85,24 @@ class DfgLabelRender<V extends DfgVertex, E extends DfgEdge> implements Renderer
 		Point2D labelPointOffset = new Point2D.Double();
 
 		// note: location is centered
-		double cx = start.getX();
+//		double cx = start.getX();
 		double cy = start.getY();
 
 		EdgeLabelRenderer labelRenderer = rc.getEdgeLabelRenderer();
 		Font font = rc.getEdgeFontTransformer().apply(e);
 		boolean isSelected = rc.getPickedEdgeState().isPicked(e);
-		Component component = labelRenderer.getEdgeLabelRendererComponent(rc.getScreenDevice(), text, font, isSelected,
-				e);
-		int labelWidth = component.getPreferredSize().width;
+		Component component = labelRenderer.getEdgeLabelRendererComponent(rc.getScreenDevice(),
+			text, font, isSelected,
+			e);
+//		int labelWidth = component.getPreferredSize().width;
 
 		List<Point2D> articulationPoints = e.getArticulationPoints();
 		if (articulationPoints.isEmpty()) {
 			double textX = (int) ((start.getX() + end.getX()) / 2 + edgeOffset); // right of the edge
 			double textY = (int) ((start.getY() + end.getY()) / 2 + edgeOffset); // below the vertex; above the bend
 			labelPointOffset.setLocation(textX, textY);
-		} else if (articulationPoints.size() == 1) {
+		}
+		else if (articulationPoints.size() == 1) {
 			Point2D bend = articulationPoints.get(0);
 			bend = multiLayerTransformer.transform(Layer.LAYOUT, bend);
 
@@ -110,14 +110,15 @@ class DfgLabelRender<V extends DfgVertex, E extends DfgEdge> implements Renderer
 			double textY = (int) (bend.getY() + edgeOffset);
 			labelPointOffset.setLocation(textX, textY);
 
-		} else {
+		}
+		else {
 
 			Point2D bend1 = articulationPoints.get(0);
 			bend1 = multiLayerTransformer.transform(Layer.LAYOUT, bend1);
 			Point2D bend2 = articulationPoints.get(1);
 			bend2 = multiLayerTransformer.transform(Layer.LAYOUT, bend2);
 
-			double vertexSide = cx + (vertexBounds.width >> 1);
+//			double vertexSide = cx + (vertexBounds.width >> 1);
 			double vertexBottom = cy + (vertexBounds.height >> 1);
 
 			double bx1 = bend1.getX();
@@ -127,7 +128,8 @@ class DfgLabelRender<V extends DfgVertex, E extends DfgEdge> implements Renderer
 				double textX = (int) ((bend1.getX() + bend2.getX()) / 2 + edgeOffset); // between bends
 				double textY = (int) ((bend1.getY() + bend2.getY()) / 2 + edgeOffset);
 				labelPointOffset.setLocation(textX, textY);
-			} else { // 3 or 4 articulations
+			}
+			else { // 3 or 4 articulations
 
 				double textX = (int) (bx1 + xDisplacement); // right of the edge
 				double textY = (int) (vertexBottom + edgeOffset); // below the vertex; above the bend
@@ -152,7 +154,8 @@ class DfgLabelRender<V extends DfgVertex, E extends DfgEdge> implements Renderer
 	}
 
 	@SuppressWarnings("unused") // used during debug
-	private void labelArticulations(Component component, GraphicsDecorator g, RenderContext<V, E> rc, E e) {
+	private void labelArticulations(Component component, GraphicsDecorator g,
+			RenderContext<V, E> rc, E e) {
 
 		int offset = 5;
 		int counter = 1;
@@ -165,8 +168,9 @@ class DfgLabelRender<V extends DfgVertex, E extends DfgEdge> implements Renderer
 			EdgeLabelRenderer labelRenderer = rc.getEdgeLabelRenderer();
 			Font font = rc.getEdgeFontTransformer().apply(e);
 			boolean isSelected = rc.getPickedEdgeState().isPicked(e);
-			component = labelRenderer.getEdgeLabelRendererComponent(rc.getScreenDevice(), "p" + counter++, font,
-					isSelected, e);
+			component = labelRenderer.getEdgeLabelRendererComponent(rc.getScreenDevice(),
+				"p" + counter++, font,
+				isSelected, e);
 
 			Dimension d = component.getPreferredSize();
 			AffineTransform old = g.getTransform();

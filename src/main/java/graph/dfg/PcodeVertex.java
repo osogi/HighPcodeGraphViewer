@@ -1,22 +1,20 @@
 package graph.dfg;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import ghidra.graph.viewer.vertex.DockingVisualVertex;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.pcode.PcodeOp;
 
 public class PcodeVertex extends DfgVertex {
 
-	PcodeOp pcode; 
+	PcodeOp pcode;
+
 	public PcodeVertex(String name, PcodeOp pcode) {
 		super(name, VertexType.PCODE);
 		this.pcode = pcode;
 	}
-	
+
 	@Override
 	public Collection<Address> getAssociatedAddresses() {
 		return List.of(pcode.getSeqnum().getTarget());

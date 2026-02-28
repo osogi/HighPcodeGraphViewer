@@ -32,7 +32,6 @@ import ghidra.graph.viewer.layout.*;
 import ghidra.graph.viewer.vertex.VisualGraphVertexShapeTransformer;
 import ghidra.util.exception.CancelledException;
 
-
 public abstract class AbstractReverseFlowChartLayout<V extends VisualVertex, E extends VisualEdge<V>>
 		extends AbstractVisualGraphLayout<V, E> {
 	protected Comparator<E> edgeComparator;
@@ -54,11 +53,11 @@ public abstract class AbstractReverseFlowChartLayout<V extends VisualVertex, E e
 		GDirectedGraph<V, E> forest = toForest(g, roots, edgeComparator);
 		GridLocationMap<V, E> grid = new GridLocationMap<>();
 
-		for (V root: roots) {
+		for (V root : roots) {
 			GridLocationMap<V, E> newGrid = computeGridLocationMap(g, forest, root);
-			grid.add(newGrid, grid.height() + 1, 0); 
+			grid.add(newGrid, grid.height() + 1, 0);
 		}
-		
+
 		OrthogonalEdgeRouter<V, E> router = new OrthogonalEdgeRouter<>(grid);
 		router.setColumnExclusionFunction(e -> getExcludedCols(grid, forest, e));
 		router.computeAndSetEdgeArticulations(g.getEdges());
@@ -66,35 +65,35 @@ public abstract class AbstractReverseFlowChartLayout<V extends VisualVertex, E e
 		return grid;
 	}
 
-	
-	private void helperToForest(VisualGraph<V, E> origGraph, GDirectedGraph<V, E> forest, V vert, Set<V> addedVerts, Comparator<E> ec) {
+	private void helperToForest(VisualGraph<V, E> origGraph, GDirectedGraph<V, E> forest, V vert,
+			Set<V> addedVerts, Comparator<E> ec) {
 		addedVerts.add(vert);
 		forest.addVertex(vert);
-		
+
 		Collection<E> edges = origGraph.getInEdges(vert);
 		List<E> sortedEdges = new ArrayList<>(edges);
 		sortedEdges.sort(edgeComparator);
-		
-		for(E e: sortedEdges) {
+
+		for (E e : sortedEdges) {
 			V parent = e.getStart();
-			
-			if(addedVerts.contains(parent)) {
+
+			if (addedVerts.contains(parent)) {
 				continue;
 			}
 			forest.addEdge(e);
 			helperToForest(origGraph, forest, parent, addedVerts, ec);
 		}
-		
+
 	}
-	
+
 	private GDirectedGraph<V, E> toForest(VisualGraph<V, E> g, List<V> roots, Comparator<E> ec) {
 		Set<V> addedVerts = new HashSet<>();
 		GDirectedGraph<V, E> forest = new JungDirectedGraph<V, E>();
-		
-		for (V r: roots) {
+
+		for (V r : roots) {
 			helperToForest(g, forest, r, addedVerts, ec);
 		}
-		
+
 		return forest;
 	}
 
@@ -140,7 +139,7 @@ public abstract class AbstractReverseFlowChartLayout<V extends VisualVertex, E e
 	 * @param g the original graph
 	 * @param tree the graph after edge removal to convert it into a tree
 	 * @param v the root of the subtree to get a grid map for
-	 * @return a GridLocationMap with the given vertex and all of its children position in the 
+	 * @return a GridLocationMap with the given vertex and all of its children position in the
 	 * grid.
 	 */
 	private GridLocationMap<V, E> computeGridLocationMap(GDirectedGraph<V, E> g,

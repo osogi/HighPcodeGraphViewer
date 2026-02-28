@@ -15,7 +15,7 @@
  */
 package graph;
 
-import ghidra.app.ExamplesPluginPackage;
+import ghidra.MiscellaneousPluginPackage;
 import ghidra.app.plugin.PluginCategoryNames;
 import ghidra.app.plugin.ProgramPlugin;
 import ghidra.app.plugin.core.decompile.DecompilerActionContext;
@@ -23,37 +23,26 @@ import ghidra.framework.plugintool.*;
 import ghidra.framework.plugintool.util.PluginStatus;
 import ghidra.program.model.listing.Program;
 import ghidra.program.util.ProgramSelection;
-import ghidra.util.HelpLocation;
 
 /**
  * Sample plugin to demonstrate a plugin with a dockable GUI graph component
  */
 //@formatter:off
 @PluginInfo(
-	status = PluginStatus.RELEASED,
-	packageName = ExamplesPluginPackage.NAME,
-	category = PluginCategoryNames.EXAMPLES,
-	shortDescription = "Sample Graph Display Plugin",
-	description = "Sample plugin to demonstrate a plugin with a dockable GUI graph component."
+	status = PluginStatus.UNSTABLE,
+	packageName = MiscellaneousPluginPackage.NAME,
+	category = PluginCategoryNames.GRAPH,
+	shortDescription = "High P-Code Graph Viewer",
+	description = "This is an experimental Ghidra plugin designed for research. It adds a window that visualizes the High P-code graph for the current function. "
 )
 //@formatter:on
-public class SampleGraphPlugin extends ProgramPlugin {
+public class HighPcodeGraphViewerPlugin extends ProgramPlugin {
+	private HighPcodeGraphViewerProvider provider;
 
-	/* package */ static final String SHOW_PROVIDER_ACTION_NAME = "Display Sample Graph";
-
-	// Note: this help location is here to satisfy our requirement that all actions
-	// have help,
-	// but is not actual help content. For your plugin, you must create your own
-	// content.
-	/* package */ static final HelpLocation DEFAULT_HELP = new HelpLocation("SampleHelpTopic",
-		"SampleHelpTopic_Anchor_Name");
-
-	private SampleGraphProvider provider;
-
-	public SampleGraphPlugin(PluginTool tool) {
+	public HighPcodeGraphViewerPlugin(PluginTool tool) {
 		super(tool);
 
-		provider = new SampleGraphProvider(tool, this);
+		provider = new HighPcodeGraphViewerProvider(tool, this);
 		createActions();
 	}
 

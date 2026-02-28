@@ -23,7 +23,7 @@ import ghidra.graph.viewer.layout.AbstractVisualGraphLayout;
 import ghidra.app.plugin.core.functiongraph.graph.layout.flowchart.AbstractFlowChartLayout;
 
 /**
- * A {@link SampleGraphPlugin} layout that can be used to apply existing Jung
+ * A {@link HighPcodeGraphViewerPlugin} layout that can be used to apply existing Jung
  * layouts.
  */
 public class SampleGraphFlowChartLayout extends AbstractFlowChartLayout<SampleVertex, SampleEdge> {

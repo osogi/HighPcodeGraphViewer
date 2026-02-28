@@ -30,7 +30,7 @@ import ghidra.program.model.address.AddressRange;
 import ghidra.program.model.pcode.HighFunction;
 
 /**
- * A graph for the {@link SampleGraphPlugin} that allows for filtering
+ * A graph for the {@link HighPcodeGraphViewerPlugin} that allows for filtering
  */
 public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 

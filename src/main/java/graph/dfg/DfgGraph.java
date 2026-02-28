@@ -28,7 +28,7 @@ import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressRange;
 
 /**
- * A graph for the {@link SampleGraphPlugin} that allows for filtering
+ * A graph for the {@link HighPcodeGraphViewerPlugin} that allows for filtering
  */
 public class DfgGraph extends DefaultVisualGraph<DfgVertex, DfgEdge> {
 

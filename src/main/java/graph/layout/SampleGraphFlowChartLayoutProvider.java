@@ -25,7 +25,7 @@ import ghidra.util.exception.CancelledException;
 import ghidra.util.task.TaskMonitor;
 
 /**
- * A layout provider for the {@link SampleGraphPlugin}
+ * A layout provider for the {@link HighPcodeGraphViewerPlugin}
  */
 public class SampleGraphFlowChartLayoutProvider
 		extends AbstractLayoutProvider<SampleVertex, SampleEdge, SampleGraph> {

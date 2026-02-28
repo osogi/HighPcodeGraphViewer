@@ -23,7 +23,7 @@ import ghidra.graph.viewer.vertex.DockingVisualVertex;
 import ghidra.program.model.address.Address;
 
 /**
- * A vertex for the {@link SampleGraphPlugin}
+ * A vertex for the {@link HighPcodeGraphViewerPlugin}
  */
 public class DfgVertex extends DockingVisualVertex {
 

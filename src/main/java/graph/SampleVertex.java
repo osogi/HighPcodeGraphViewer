@@ -41,7 +41,7 @@ import graph.layout.DfgLayoutProvider;
 import ghidra.program.model.pcode.PcodeOp;
 
 /**
- * A vertex for the {@link SampleGraphPlugin}
+ * A vertex for the {@link HighPcodeGraphViewerPlugin}
  */
 public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgGraph>
 		implements Comparable<SampleVertex> {

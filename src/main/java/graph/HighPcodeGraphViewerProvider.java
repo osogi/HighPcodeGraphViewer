@@ -46,14 +46,14 @@ import ghidra.util.task.TaskMonitor;
 
 /**
  * A {@link ComponentProvider} that is the UI component of the
- * {@link SampleGraphPlugin}. This shows a graph of the plugins in the system.
+ * {@link HighPcodeGraphViewerPlugin}. This shows a graph of the plugins in the system.
  */
-public class SampleGraphProvider extends ComponentProviderAdapter {
+public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 
 	/* package */ static final String NAME = "Sample Graph";
 	/* package */ static final String RELAYOUT_GRAPH_ACTION_NAME = "Relayout Graph";
 
-	private SampleGraphPlugin plugin;
+	private HighPcodeGraphViewerPlugin plugin;
 	private JPanel mainPanel;
 	private JComponent component;
 
@@ -72,7 +72,7 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 		currentLocation = null;
 	}
 
-	public SampleGraphProvider(PluginTool tool, SampleGraphPlugin plugin) {
+	public HighPcodeGraphViewerProvider(PluginTool tool, HighPcodeGraphViewerPlugin plugin) {
 		super(tool, NAME, plugin.getName());
 
 		this.plugin = plugin;
@@ -178,8 +178,6 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 					changeLayout(newActionState.getUserData());
 				}
 			};
-		layoutAction.setGroup("B");
-		layoutAction.setHelpLocation(SampleGraphPlugin.DEFAULT_HELP);
 
 		addLayoutProviders(layoutAction);
 

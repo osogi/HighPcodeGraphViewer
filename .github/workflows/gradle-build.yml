@@ -1,0 +1,45 @@
+name: gradle-build
+
+on: [pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        ghidra: ["latest", "12.0.1"]  # Must be a YAML list
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: "temurin"  # Required parameter
+        java-version: "21"
+
+    - name: Setup Ghidra
+      uses: antoniovazquezblanco/setup-ghidra@v2.0.3
+      with:
+        version: ${{ matrix.ghidra }}
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: "8.7"
+
+    - name: Build
+      run: |
+        gradle buildExtension -PGHIDRA_INSTALL_DIR=${{ env.GHIDRA_INSTALL_DIR }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: BinExport_Ghidra_${{ matrix.ghidra }}
+        path: |
+          ${{ github.workspace }}/dist/*
+
+    - name: PMD Analysis
+      id: pmd
+      run: gradle pmdMain -PGHIDRA_INSTALL_DIR=${{ env.GHIDRA_INSTALL_DIR }}

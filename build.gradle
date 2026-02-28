@@ -29,6 +29,42 @@
 // application.gradle.version property in <GHIDRA_INSTALL_DIR>/Ghidra/application.properties
 // for the correction version of Gradle to use for the Ghidra installation you specify.
 
+
+plugins {
+	id 'com.diffplug.spotless' version '7.0.2'
+	id 'java'
+	id 'pmd'           // Static analysis
+}
+
+repositories {
+	mavenCentral()
+}
+
+spotless {
+	java {
+		target 'src/**/*.java'
+		targetExclude 'src/main/java/datastructures/**' // Ignore third-party src
+
+		// Use Ghidra's Eclipse formatter rules
+		eclipse().configFile("${rootDir}/config/GhidraEclipseFormatter.xml")
+
+		// Optional extras
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+}
+
+pmd {
+	toolVersion = '7.7.0'
+	consoleOutput = true
+	ruleSetFiles = files("${rootDir}/config/pmd/ruleset.xml")
+}
+
+tasks.withType(Pmd) {
+	exclude 'src/main/java/datastructures/**' // Ignore third-party src
+}
+
 //----------------------START "DO NOT MODIFY" SECTION------------------------------
 def ghidraInstallDir
 
@@ -42,20 +78,24 @@ else {
 	ghidraInstallDir = "<REPLACE>"
 }
 
-task distributeExtension {
-	group = "Ghidra"
-
-	apply from: new File(ghidraInstallDir).getCanonicalPath() + "/support/buildExtension.gradle"
-	dependsOn ':buildExtension'
+if (ghidraInstallDir != "<REPLACE>") {
+    task distributeExtension {
+        group = "Ghidra"
+        apply from: new File(ghidraInstallDir).getCanonicalPath() + "/support/buildExtension.gradle"
+        dependsOn ':buildExtension'
+    }
+} else {
+    // Warn if Ghidra isn't set (but don't fail)
+    gradle.buildFinished { result ->
+        if (result.failure == null && !project.gradle.startParameter.taskNames.contains("help")) {
+            println "\n⚠️  WARNING: GHIDRA_INSTALL_DIR not set. Ghidra extension tasks (e.g., 'buildExtension') will fail."
+            println "   Set GHIDRA_INSTALL_DIR via environment variable or -P flag.\n"
+        }
+    }
 }
+
 //----------------------END "DO NOT MODIFY" SECTION-------------------------------
 
-repositories {
-	// Declare dependency repositories here.  This is not needed if dependencies are manually 
-	// dropped into the lib/ directory.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html for more info.
-	// Ex: mavenCentral()
-}
 
 dependencies {
 	// Any external dependencies added here will automatically be copied to the lib/ directory when

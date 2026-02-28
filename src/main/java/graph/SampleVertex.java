@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,28 +19,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-
-import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-
-import org.apache.commons.collections4.BidiMap;
-import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import edu.uci.ics.jung.visualization.RenderContext;
-import edu.uci.ics.jung.visualization.renderers.Renderer.EdgeLabel;
 import ghidra.graph.viewer.GraphViewer;
 import ghidra.graph.viewer.VisualGraphView;
 import ghidra.graph.viewer.layout.LayoutProvider;
 import ghidra.graph.viewer.layout.VisualGraphLayout;
-import ghidra.graph.viewer.vertex.DockingVisualVertex;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressRange;
-import ghidra.program.model.address.AddressRangeImpl;
-import ghidra.program.model.address.AddressSet;
 import ghidra.program.model.pcode.PcodeBlockBasic;
-import ghidra.program.model.pcode.PcodeOpAST;
 import ghidra.program.model.pcode.Varnode;
 import ghidra.program.util.ProgramSelection;
 import ghidra.util.exception.CancelledException;
@@ -111,7 +98,8 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		renderContext.setEdgeLabelTransformer(edgeLabelTransformer);
 	}
 
-	private static VisualGraphView<DfgVertex, DfgEdge, DfgGraph> buildGraphView(PcodeBlockBasic hBasicBlock) {
+	private static VisualGraphView<DfgVertex, DfgEdge, DfgGraph> buildGraphView(
+			PcodeBlockBasic hBasicBlock) {
 		VisualGraphView<DfgVertex, DfgEdge, DfgGraph> graphView = new VisualGraphView<>();
 
 		LayoutProvider<DfgVertex, DfgEdge, DfgGraph> lp = new DfgLayoutProvider();
@@ -120,9 +108,10 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		DfgGraph graph = buildGraph(hBasicBlock);
 		try {
 			VisualGraphLayout<DfgVertex, DfgEdge> l = lp.getLayout(graph, TaskMonitor.DUMMY);
-			EdgeLabel<DfgVertex, DfgEdge> p = l.getEdgeLabelRenderer();
+//			EdgeLabel<DfgVertex, DfgEdge> p = l.getEdgeLabelRenderer();
 			graph.setLayout(l);
-		} catch (CancelledException e) {
+		}
+		catch (CancelledException e) {
 			// can't happen as long as we are using the dummy monitor
 		}
 		graphView.setGraph(graph);
@@ -144,12 +133,13 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 	public int compareTo(SampleVertex other) {
 		return startAddress.compareTo(other.startAddress);
 	}
-	
+
 	private boolean forceSelection;
+
 	public void setForceSelection(boolean value) {
 		forceSelection = value;
 	}
-	
+
 	@Override
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
@@ -157,7 +147,7 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 			graph.clearSelectedVertices();
 		}
 	}
-	
+
 	/**
 	 *
 	 * @param sel
@@ -174,11 +164,10 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		}
 
 		graphView.getGraphComponent().setVerticesSelected(verts);
-		
+
 		return !verts.isEmpty();
 	}
 
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

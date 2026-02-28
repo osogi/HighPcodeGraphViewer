@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,51 +19,17 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.*;
 
-import org.apache.commons.collections4.BidiMap;
-import org.apache.commons.collections4.bidimap.DualHashBidiMap;
-
 import docking.GenericHeader;
-import edu.uci.ics.jung.visualization.RenderContext;
-import edu.uci.ics.jung.visualization.renderers.Renderer.EdgeLabel;
 import generic.theme.GColor;
 import ghidra.graph.VisualGraph;
-import ghidra.graph.viewer.GraphViewer;
 import ghidra.graph.viewer.VisualEdge;
 import ghidra.graph.viewer.VisualGraphView;
 import ghidra.graph.viewer.VisualVertex;
-import ghidra.graph.viewer.layout.JungLayoutProvider;
-import ghidra.graph.viewer.layout.LayoutProvider;
-import ghidra.graph.viewer.layout.VisualGraphLayout;
-import ghidra.graph.viewer.renderer.VisualGraphEdgeLabelRenderer;
 import ghidra.graph.viewer.vertex.AbstractVisualVertex;
-import ghidra.program.model.address.Address;
-import ghidra.program.model.block.CodeBlock;
-import ghidra.program.model.block.CodeBlockReferenceIterator;
-import ghidra.program.model.listing.Function;
-import ghidra.program.model.pcode.HighFunction;
-import ghidra.program.model.pcode.PcodeBlockBasic;
-import ghidra.program.model.pcode.PcodeOp;
-import ghidra.program.model.pcode.Varnode;
 import ghidra.util.MathUtilities;
-import ghidra.util.exception.CancelledException;
-import ghidra.util.task.TaskMonitor;
-import graph.dfg.DfgEdge;
-import graph.dfg.DfgGraph;
-import graph.dfg.DfgVertex;
-import graph.dfg.PcodeVertex;
-import graph.dfg.VarnodeVertex;
-import graph.dfg.DfgVertex.VertexType;
-import graph.layout.DfgLayoutProvider;
 
 public class GraphViewVisualVertex<V extends VisualVertex, E extends VisualEdge<V>, G extends VisualGraph<V, E>>
 		extends AbstractVisualVertex {
@@ -79,7 +45,7 @@ public class GraphViewVisualVertex<V extends VisualVertex, E extends VisualEdge<
 	public GraphViewVisualVertex(String name, VisualGraphView<V, E, G> graphView) {
 		this.name = name;
 		this.graphView = graphView;
-		
+
 		workingArea = graphView.getViewComponent();
 		workingArea.setPreferredSize(new Dimension(200, 50));
 		workingArea.setBackground(new GColor("color.bg.visualgraph.dockingvertex"));
@@ -204,6 +170,7 @@ public class GraphViewVisualVertex<V extends VisualVertex, E extends VisualEdge<
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -220,11 +187,11 @@ public class GraphViewVisualVertex<V extends VisualVertex, E extends VisualEdge<
 			if (other.name != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)) {
+		}
+		else if (!name.equals(other.name)) {
 			return false;
 		}
 		return true;
 	}
-
 
 }

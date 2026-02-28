@@ -35,10 +35,6 @@ import ghidra.graph.viewer.*;
 import ghidra.graph.viewer.layout.*;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressRange;
-import ghidra.program.model.block.BasicBlockModel;
-import ghidra.program.model.block.CodeBlock;
-import ghidra.program.model.block.CodeBlockModel;
-import ghidra.program.model.block.CodeBlockReferenceIterator;
 import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.pcode.HighFunction;
@@ -66,7 +62,9 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 	private LayoutProvider<SampleVertex, SampleEdge, SampleGraph> layoutProvider;
 
 	private HighFunction currentFunction;
+	@SuppressWarnings("unused")
 	private Program currentProgram;
+	@SuppressWarnings("unused")
 	private ProgramLocation currentLocation;
 
 	void clear() {
@@ -134,9 +132,11 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 		if (currentFunction != null) {
 			try {
 				graph = GraphFactory.createGraph(currentFunction, TaskMonitor.DUMMY);
-				VisualGraphLayout<SampleVertex, SampleEdge> layout = layoutProvider.getLayout(graph, TaskMonitor.DUMMY);
+				VisualGraphLayout<SampleVertex, SampleEdge> layout =
+					layoutProvider.getLayout(graph, TaskMonitor.DUMMY);
 				graph.setLayout(layout);
-			} catch (CancelledException e) {
+			}
+			catch (CancelledException e) {
 				// can't happen as long as we are using the dummy monitor
 			}
 		}
@@ -159,23 +159,25 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 
 	private void addLayoutAction() {
 
-		MultiStateDockingAction<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> layoutAction = new MultiStateDockingAction<>(
+		MultiStateDockingAction<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> layoutAction =
+			new MultiStateDockingAction<>(
 				RELAYOUT_GRAPH_ACTION_NAME, plugin.getName(), KeyBindingType.SHARED) {
 
-			@Override
-			public void actionPerformed(ActionContext context) {
-				// this callback is when the user clicks the button
-				LayoutProvider<SampleVertex, SampleEdge, SampleGraph> currentUserData = getCurrentUserData();
-				changeLayout(currentUserData);
-			}
+				@Override
+				public void actionPerformed(ActionContext context) {
+					// this callback is when the user clicks the button
+					LayoutProvider<SampleVertex, SampleEdge, SampleGraph> currentUserData =
+						getCurrentUserData();
+					changeLayout(currentUserData);
+				}
 
-			@Override
-			public void actionStateChanged(
-					ActionState<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> newActionState,
-					EventTrigger trigger) {
-				changeLayout(newActionState.getUserData());
-			}
-		};
+				@Override
+				public void actionStateChanged(
+						ActionState<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> newActionState,
+						EventTrigger trigger) {
+					changeLayout(newActionState.getUserData());
+				}
+			};
 		layoutAction.setGroup("B");
 		layoutAction.setHelpLocation(SampleGraphPlugin.DEFAULT_HELP);
 
@@ -195,30 +197,34 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 	private void addLayoutProviders(
 			MultiStateDockingAction<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> layoutAction) {
 
-		LayoutProvider provider = new SampleGraphFlowChartLayoutProvider();
-		layoutAction.addActionState(new ActionState<>(provider.getLayoutName(), provider.getActionIcon(), provider));
+		LayoutProvider<SampleVertex, SampleEdge, SampleGraph> provider =
+			new SampleGraphFlowChartLayoutProvider();
+		layoutAction.addActionState(
+			new ActionState<>(provider.getLayoutName(), provider.getActionIcon(), provider));
 
 	}
 
 	private class GraphFactory {
-		private static boolean isEntry(CodeBlock codeBlock) {
-			boolean isSource = true;
-			try {
-				CodeBlockReferenceIterator iter = codeBlock.getSources(TaskMonitor.DUMMY);
-				while (iter.hasNext()) {
-					isSource = false;
-					if (iter.next().getFlowType().isCall()) {
-						// any calls into a code block will make it an 'entry'
-						return true;
-					}
-				}
-			} catch (CancelledException e) {
-				// will never happen, because I don't have a monitor
-			}
-			return isSource;
-		}
+//		private static boolean isEntry(CodeBlock codeBlock) {
+//			boolean isSource = true;
+//			try {
+//				CodeBlockReferenceIterator iter = codeBlock.getSources(TaskMonitor.DUMMY);
+//				while (iter.hasNext()) {
+//					isSource = false;
+//					if (iter.next().getFlowType().isCall()) {
+//						// any calls into a code block will make it an 'entry'
+//						return true;
+//					}
+//				}
+//			}
+//			catch (CancelledException e) {
+//				// will never happen, because I don't have a monitor
+//			}
+//			return isSource;
+//		}
 
-		private static SampleGraph createGraph(HighFunction function, TaskMonitor monitor) throws CancelledException {
+		private static SampleGraph createGraph(HighFunction function, TaskMonitor monitor)
+				throws CancelledException {
 
 			BidiMap<PcodeBlockBasic, SampleVertex> vertices = createVertices(function, monitor);
 
@@ -226,10 +232,12 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 
 			SampleGraph graph = new SampleGraph(function, vertices.values(), edges);
 
-			SampleVertex functionEntryVertex = graph.getVertexForAddress(function.getFunction().getEntryPoint());
+			SampleVertex functionEntryVertex =
+				graph.getVertexForAddress(function.getFunction().getEntryPoint());
 
 			if (functionEntryVertex == null) {
-				functionEntryVertex = graph.getNextVertexForAddress(function.getFunction().getEntryPoint());
+				functionEntryVertex =
+					graph.getNextVertexForAddress(function.getFunction().getEntryPoint());
 			}
 
 			graph.setRootVertex(functionEntryVertex);
@@ -237,12 +245,14 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 			return graph;
 		}
 
-		private static Collection<SampleEdge> createdEdges(BidiMap<PcodeBlockBasic, SampleVertex> vertices,
+		private static Collection<SampleEdge> createdEdges(
+				BidiMap<PcodeBlockBasic, SampleVertex> vertices,
 				TaskMonitor monitor) throws CancelledException {
 
 			List<SampleEdge> edges = new ArrayList<>();
 			for (SampleVertex startVertex : vertices.values()) {
-				Collection<SampleEdge> vertexEdges = getEdgesForStartVertex(vertices, startVertex, monitor);
+				Collection<SampleEdge> vertexEdges =
+					getEdgesForStartVertex(vertices, startVertex, monitor);
 
 				edges.addAll(vertexEdges);
 			}
@@ -250,8 +260,10 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 			return edges;
 		}
 
+		@SuppressWarnings("unused")
 		private static Collection<SampleEdge> getEdgesForStartVertex(
-				BidiMap<PcodeBlockBasic, SampleVertex> blockToVertexMap, SampleVertex startVertex, TaskMonitor monitor)
+				BidiMap<PcodeBlockBasic, SampleVertex> blockToVertexMap, SampleVertex startVertex,
+				TaskMonitor monitor)
 				throws CancelledException {
 
 			List<SampleEdge> edges = new ArrayList<>();
@@ -270,6 +282,7 @@ public class SampleGraphProvider extends ComponentProviderAdapter {
 			return edges;
 		}
 
+		@SuppressWarnings("unused")
 		private static BidiMap<PcodeBlockBasic, SampleVertex> createVertices(HighFunction hfunction,
 				TaskMonitor monitor) throws CancelledException {
 			BidiMap<PcodeBlockBasic, SampleVertex> vertices = new DualHashBidiMap<>();

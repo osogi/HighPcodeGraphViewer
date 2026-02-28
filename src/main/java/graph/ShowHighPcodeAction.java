@@ -10,11 +10,10 @@ public class ShowHighPcodeAction extends AbstractDecompilerAction {
 
 //	private PluginTool tool;
 	private Consumer<DecompilerActionContext> onPerform;
-	
-	
+
 	public ShowHighPcodeAction(Consumer<DecompilerActionContext> callback) {
 		super("Show High Pcode Graph");
-		
+
 		onPerform = callback;
 		setPopupMenuData(new MenuData(new String[] { "Show High Pcode Graph" }));
 		setEnabled(true);

@@ -1,18 +1,16 @@
 package graph.dfg;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import ghidra.program.model.address.Address;
-import ghidra.program.model.pcode.PcodeOp;
 import ghidra.program.model.pcode.Varnode;
 
 public class VarnodeVertex extends DfgVertex {
 
-	Varnode vn; 
+	Varnode vn;
+
 	public VarnodeVertex(String name, Varnode varnode) {
 		super(name, VertexType.VARNODE);
 		vn = varnode;
@@ -20,17 +18,17 @@ public class VarnodeVertex extends DfgVertex {
 
 	@Override
 	public Collection<Address> getAssociatedAddresses() {
-		List <Address> res = new LinkedList<>();
+		List<Address> res = new LinkedList<>();
 
 		// Highlighting varnodes gives more problem than value
 //		Iterator<PcodeOp> pcodes = vn.getDescendants();
 //		while (pcodes.hasNext()) {
 //			res.add(pcodes.next().getSeqnum().getTarget());
 //		}
-		
+
 		return res;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

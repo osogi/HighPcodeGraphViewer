@@ -18,7 +18,7 @@ package graph.dfg;
 import ghidra.graph.viewer.edge.AbstractVisualEdge;
 
 /**
- * An edge for the {@link SampleGraph}
+ * An edge for the {@link DfgGraph}
  */
 public class DfgEdge extends AbstractVisualEdge<DfgVertex> {
 

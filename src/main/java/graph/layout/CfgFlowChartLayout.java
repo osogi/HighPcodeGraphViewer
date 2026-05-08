@@ -26,29 +26,29 @@ import ghidra.app.plugin.core.functiongraph.graph.layout.flowchart.AbstractFlowC
  * A {@link HighPcodeGraphViewerPlugin} layout that can be used to apply existing Jung
  * layouts.
  */
-public class SampleGraphFlowChartLayout extends AbstractFlowChartLayout<SampleVertex, SampleEdge> {
+public class CfgFlowChartLayout extends AbstractFlowChartLayout<CfgVertex, CfgEdge> {
 
-	public SampleGraphFlowChartLayout(SampleGraph graph) {
-		super(graph, new _SampleEdgeComp(), false);
+	public CfgFlowChartLayout(CfgGraph graph) {
+		super(graph, new _CfgEdgeComp(), false);
 	}
 
-	private static class _SampleEdgeComp implements Comparator<SampleEdge> {
+	private static class _CfgEdgeComp implements Comparator<CfgEdge> {
 		@Override
-		public int compare(SampleEdge e1, SampleEdge e2) {
+		public int compare(CfgEdge e1, CfgEdge e2) {
 			return 0;
 		}
 	}
 
 	@Override
-	protected SampleVertex getRoot(VisualGraph<SampleVertex, SampleEdge> g) {
-		if (g instanceof SampleGraph sg)
+	protected CfgVertex getRoot(VisualGraph<CfgVertex, CfgEdge> g) {
+		if (g instanceof CfgGraph sg)
 			return sg.getRootVertex();
 		return null;
 	}
 
 	@Override
-	public AbstractVisualGraphLayout<SampleVertex, SampleEdge> createClonedLayout(
-			VisualGraph<SampleVertex, SampleEdge> newGraph) {
-		return new SampleGraphFlowChartLayout((SampleGraph) newGraph);
+	public AbstractVisualGraphLayout<CfgVertex, CfgEdge> createClonedLayout(
+			VisualGraph<CfgVertex, CfgEdge> newGraph) {
+		return new CfgFlowChartLayout((CfgGraph) newGraph);
 	}
 }

@@ -43,8 +43,8 @@ import ghidra.program.model.pcode.PcodeOp;
 /**
  * A vertex for the {@link HighPcodeGraphViewerPlugin}
  */
-public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgGraph>
-		implements Comparable<SampleVertex> {
+public class CfgVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgGraph>
+		implements Comparable<CfgVertex> {
 	private DfgGraph graph;
 
 	public PcodeBlockBasic hBasicBlock;
@@ -121,7 +121,7 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		return graphView;
 	}
 
-	public SampleVertex(String name, PcodeBlockBasic hbb) {
+	public CfgVertex(String name, PcodeBlockBasic hbb) {
 		super(name, buildGraphView(hbb));
 		hBasicBlock = hbb;
 		graph = graphView.getVisualGraph();
@@ -130,7 +130,7 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 	}
 
 	@Override
-	public int compareTo(SampleVertex other) {
+	public int compareTo(CfgVertex other) {
 		return startAddress.compareTo(other.startAddress);
 	}
 
@@ -187,7 +187,7 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		SampleVertex other = (SampleVertex) obj;
+		CfgVertex other = (CfgVertex) obj;
 		if (hBasicBlock == null) {
 			if (other.hBasicBlock != null) {
 				return false;

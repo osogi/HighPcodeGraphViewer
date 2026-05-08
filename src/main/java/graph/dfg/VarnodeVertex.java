@@ -20,7 +20,7 @@ public class VarnodeVertex extends DfgVertex {
 	public Collection<Address> getAssociatedAddresses() {
 		List<Address> res = new LinkedList<>();
 
-		// Highlighting varnodes gives more problem than value
+		// Highlighting varnodes creates more noise than signal.
 //		Iterator<PcodeOp> pcodes = vn.getDescendants();
 //		while (pcodes.hasNext()) {
 //			res.add(pcodes.next().getSeqnum().getTarget());

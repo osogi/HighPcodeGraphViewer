@@ -33,7 +33,7 @@ public class DfgLayoutProvider
 		extends AbstractLayoutProvider<DfgVertex, DfgEdge, DfgGraph> {
 
 	private static final String NAME = "Flow chart";
-	private static final Icon DEFAULT_ICON = new GIcon("icon.Dfg.graph.dependency.layout");
+	private static final Icon DEFAULT_ICON = new GIcon("icon.highpcode.dfg.layout.flowchart");
 
 	@Override
 	public VisualGraphLayout<DfgVertex, DfgEdge> getLayout(DfgGraph g, TaskMonitor monitor)

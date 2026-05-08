@@ -88,7 +88,7 @@ if (ghidraInstallDir != "<REPLACE>") {
     // Warn if Ghidra isn't set (but don't fail)
     gradle.buildFinished { result ->
         if (result.failure == null && !project.gradle.startParameter.taskNames.contains("help")) {
-            println "\n⚠️  WARNING: GHIDRA_INSTALL_DIR not set. Ghidra extension tasks (e.g., 'buildExtension') will fail."
+            println "\nWARNING: GHIDRA_INSTALL_DIR not set. Ghidra extension tasks (e.g., 'buildExtension') will fail."
             println "   Set GHIDRA_INSTALL_DIR via environment variable or -P flag.\n"
         }
     }

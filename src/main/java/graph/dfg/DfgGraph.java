@@ -70,7 +70,7 @@ public class DfgGraph extends DefaultVisualGraph<DfgVertex, DfgEdge> {
 		return res;
 	}
 
-	public List<DfgVertex> getFinVertices() { // leafs, pcode without output; varnode without use in this bb;
+	public List<DfgVertex> getFinVertices() { // Leaves: P-Code without output, or varnodes unused in this block.
 		List<DfgVertex> res = new LinkedList<>();
 		Collection<DfgVertex> verts = this.getVertices();
 		for (DfgVertex v : verts) {

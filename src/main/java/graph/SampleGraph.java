@@ -46,20 +46,20 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 		rootVertex = v;
 	}
 
-	private class VertexIntrerval implements Interval {
+	private class VertexInterval implements Interval {
 
 		private long start;
 		private long end;
 		public SampleVertex vert;
 
-		public VertexIntrerval(SampleVertex v) {
+		public VertexInterval(SampleVertex v) {
 			super();
 			start = v.startAddress.getUnsignedOffset();
 			end = v.endAddress.getUnsignedOffset() + 1;
 			vert = v;
 		}
 
-		public VertexIntrerval(long s, long e) {
+		public VertexInterval(long s, long e) {
 			super();
 			start = s;
 			end = e + 1;
@@ -85,23 +85,26 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 				return false;
 			}
 
-			VertexIntrerval other = (VertexIntrerval) obj;
+			VertexInterval other = (VertexInterval) obj;
 			if (vert == null) {
-				if (other.vert != null) {
-					return false;
-				}
+				return other.vert == null;
 			}
 			return vert.equals(other.vert);
 		}
+
+		@Override
+		public int hashCode() {
+			return vert == null ? 0 : vert.hashCode();
+		}
 	}
 
-	IntervalSetTree<VertexIntrerval> sortedVertices;
+	IntervalSetTree<VertexInterval> sortedVertices;
 
 	@Override
 	protected void verticesAdded(Collection<SampleVertex> added) {
 		super.verticesAdded(added);
 		for (SampleVertex v : added) {
-			sortedVertices.insert(new VertexIntrerval(v));
+			sortedVertices.insert(new VertexInterval(v));
 		}
 	}
 
@@ -109,7 +112,7 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 	protected void verticesRemoved(Collection<SampleVertex> removed) {
 		super.verticesRemoved(removed);
 		for (SampleVertex v : removed) {
-			sortedVertices.delete(new VertexIntrerval(v));
+			sortedVertices.delete(new VertexInterval(v));
 		}
 	}
 
@@ -161,7 +164,7 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 	}
 
 	public HashSet<SampleVertex> getVerticesForRange(AddressRange addrRange) {
-		Iterator<VertexIntrerval> it = sortedVertices.overlappers(new VertexIntrerval(
+		Iterator<VertexInterval> it = sortedVertices.overlappers(new VertexInterval(
 			addrRange.getMinAddress().getUnsignedOffset(),
 			addrRange.getMaxAddress().getUnsignedOffset()));
 

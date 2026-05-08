@@ -1,9 +1,9 @@
 
 # High P-Code Graph Viewer
 
-An experimental Ghidra plugin for research and reverse engineering. It adds a dedicated window visualizing the **High P-code graph** for the current function, with interactive highlighting synchronized to the Decompiler.
+An experimental Ghidra plugin for research and reverse engineering. It adds a dedicated window that visualizes the **High P-Code graph** for the current function, with interactive highlighting synchronized to the Decompiler.
 
-The graph displays a **Control Flow Graph (CFG)** of basic blocks, each containing the associated **Data Flow Graph (DFG)** of varnodes and p-nodes. When you select a pseudo-C statement in the Decompiler window, the corresponding High P-code operations are automatically highlighted.
+The graph displays a **Control Flow Graph (CFG)** of basic blocks, each containing the associated **Data Flow Graph (DFG)** of varnodes and P-Code operations. When you select a pseudo-C statement in the Decompiler window, the corresponding High P-Code operations are automatically highlighted.
 
 ![Peek 2026-02-28 16-00](https://github.com/user-attachments/assets/ea7e762c-0a81-476b-9468-645681140ecf)
 
@@ -11,19 +11,19 @@ The graph displays a **Control Flow Graph (CFG)** of basic blocks, each containi
 
 ## Requirements
 
-- Ghidra (tested on 12.0))
+- Ghidra (tested on 12.0)
 - [JDK 21 64-bit](https://adoptium.net/temurin/releases)
-
-For build:
-- gradle 8.7+
+- Gradle 8.7 or later
 
 ---
 
 ## Build
 
 ```bash
-gradle -PGHIDRA_INSTALL_DIR=<absolute/path/to/ghidra> #This produces the extension ZIP in `dist/`.
-````
+gradle -PGHIDRA_INSTALL_DIR=<absolute/path/to/ghidra>
+```
+
+This produces the extension ZIP in `dist/`.
 
 ---
 

@@ -9,15 +9,19 @@
     <META name="GENERATOR" content="Microsoft FrontPage 4.0">
     <META name="ProgId" content="FrontPage.Editor.Document">
 
-    <TITLE>Skeleton Help File for a Module</TITLE>
+    <TITLE>High P-Code Graph Viewer</TITLE>
     <LINK rel="stylesheet" type="text/css" href="help/shared/DefaultStyle.css">
   </HEAD>
 
   <BODY>
-    <H1><a name="HelpAnchor"></a>Skeleton Help File for a Module</H1>
+    <H1><a name="HighPcodeGraphViewer"></a>High P-Code Graph Viewer</H1>
 
-    <P>This is a simple skeleton help topic. For a better description of what should and should not
-    go in here, see the "sample" Ghidra extension in the Extensions/Ghidra directory, or see your 
-    favorite help topic. In general, language modules do not have their own help topics.</P>
+    <P>The High P-Code Graph Viewer visualizes the High P-Code graph for the current function.
+    The outer graph shows basic-block control flow, and each block contains a data-flow graph of
+    the P-Code operations and varnodes associated with that block.</P>
+
+    <P>To open the viewer, place the cursor in a decompiled function, right-click in the
+    Decompiler window, and choose <B>Show High P-Code Graph</B>. Selecting pseudo-C in the
+    Decompiler highlights the corresponding P-Code operations in the graph.</P>
   </BODY>
 </HTML>

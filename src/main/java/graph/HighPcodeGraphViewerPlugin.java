@@ -25,7 +25,7 @@ import ghidra.program.model.listing.Program;
 import ghidra.program.util.ProgramSelection;
 
 /**
- * Sample plugin to demonstrate a plugin with a dockable GUI graph component
+ * Plugin entry point for the High P-Code graph viewer.
  */
 //@formatter:off
 @PluginInfo(
@@ -33,7 +33,7 @@ import ghidra.program.util.ProgramSelection;
 	packageName = MiscellaneousPluginPackage.NAME,
 	category = PluginCategoryNames.GRAPH,
 	shortDescription = "High P-Code Graph Viewer",
-	description = "This is an experimental Ghidra plugin designed for research. It adds a window that visualizes the High P-code graph for the current function. "
+	description = "Visualizes the High P-Code graph for the current function."
 )
 //@formatter:on
 public class HighPcodeGraphViewerPlugin extends ProgramPlugin {
@@ -47,6 +47,9 @@ public class HighPcodeGraphViewerPlugin extends ProgramPlugin {
 	}
 
 	private void updateProvider(DecompilerActionContext ctx) {
+		if (ctx == null || ctx.getHighFunction() == null) {
+			return;
+		}
 		provider.updateFunction(ctx.getHighFunction(), currentProgram);
 		provider.setVisible(true);
 	}

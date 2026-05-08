@@ -151,7 +151,7 @@ public class SampleVertex extends GraphViewVisualVertex<DfgVertex, DfgEdge, DfgG
 	/**
 	 *
 	 * @param sel
-	 * @return is any inner vertices selected
+	 * @return true when any inner vertices are selected
 	 */
 	public boolean selectionChanged(ProgramSelection sel) {
 		Iterator<AddressRange> subSel = sel.intersectRange(startAddress, endAddress).iterator();

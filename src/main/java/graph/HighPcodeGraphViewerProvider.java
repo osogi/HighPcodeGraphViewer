@@ -35,7 +35,6 @@ import ghidra.graph.viewer.*;
 import ghidra.graph.viewer.layout.*;
 import ghidra.program.model.address.Address;
 import ghidra.program.model.address.AddressRange;
-import ghidra.program.model.listing.Function;
 import ghidra.program.model.listing.Program;
 import ghidra.program.model.pcode.HighFunction;
 import ghidra.program.model.pcode.PcodeBlockBasic;
@@ -46,11 +45,11 @@ import ghidra.util.task.TaskMonitor;
 
 /**
  * A {@link ComponentProvider} that is the UI component of the
- * {@link HighPcodeGraphViewerPlugin}. This shows a graph of the plugins in the system.
+ * {@link HighPcodeGraphViewerPlugin}. This shows the High P-Code graph for the current function.
  */
 public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 
-	/* package */ static final String NAME = "Sample Graph";
+	/* package */ static final String NAME = "High P-Code Graph";
 	/* package */ static final String RELAYOUT_GRAPH_ACTION_NAME = "Relayout Graph";
 
 	private HighPcodeGraphViewerPlugin plugin;
@@ -70,6 +69,8 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 	void clear() {
 		currentProgram = null;
 		currentLocation = null;
+		currentFunction = null;
+		graph = null;
 	}
 
 	public HighPcodeGraphViewerProvider(PluginTool tool, HighPcodeGraphViewerPlugin plugin) {
@@ -90,8 +91,12 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 	}
 
 	private void installGraph() {
+		if (currentFunction == null) {
+			return;
+		}
+
 		if (graph != null) {
-			// TODO: it was in original plugin but it crush with it.
+			// Disposing the graph here can destabilize the embedded graph view.
 			// graph.dispose();
 		}
 
@@ -131,6 +136,9 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 	private void buildGraph() {
 		if (currentFunction != null) {
 			try {
+				if (layoutProvider == null) {
+					layoutProvider = new SampleGraphFlowChartLayoutProvider();
+				}
 				graph = GraphFactory.createGraph(currentFunction, TaskMonitor.DUMMY);
 				VisualGraphLayout<SampleVertex, SampleEdge> layout =
 					layoutProvider.getLayout(graph, TaskMonitor.DUMMY);
@@ -197,6 +205,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 
 		LayoutProvider<SampleVertex, SampleEdge, SampleGraph> provider =
 			new SampleGraphFlowChartLayoutProvider();
+		layoutProvider = provider;
 		layoutAction.addActionState(
 			new ActionState<>(provider.getLayoutName(), provider.getActionIcon(), provider));
 
@@ -226,7 +235,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 
 			BidiMap<PcodeBlockBasic, SampleVertex> vertices = createVertices(function, monitor);
 
-			Collection<SampleEdge> edges = createdEdges(vertices, monitor);
+			Collection<SampleEdge> edges = createEdges(vertices, monitor);
 
 			SampleGraph graph = new SampleGraph(function, vertices.values(), edges);
 
@@ -243,7 +252,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 			return graph;
 		}
 
-		private static Collection<SampleEdge> createdEdges(
+		private static Collection<SampleEdge> createEdges(
 				BidiMap<PcodeBlockBasic, SampleVertex> vertices,
 				TaskMonitor monitor) throws CancelledException {
 
@@ -287,10 +296,14 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 
 			ArrayList<PcodeBlockBasic> bbs = hfunction.getBasicBlocks();
 
-			Function fun = hfunction.getFunction();
-
 			for (PcodeBlockBasic bb : bbs) {
-				Address adr = bb.getFirstOp().getSeqnum().getTarget();
+				Address adr = bb.getStart();
+				if (adr == null && bb.getFirstOp() != null) {
+					adr = bb.getFirstOp().getSeqnum().getTarget();
+				}
+				if (adr == null) {
+					continue;
+				}
 				SampleVertex v = new SampleVertex(adr.toString(), bb);
 				vertices.put(bb, v);
 			}
@@ -302,8 +315,9 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 	}
 
 	public void selectionChanged(ProgramSelection sel) {
-		if (graph == null)
+		if (graph == null) {
 			return;
+		}
 
 		HashSet<SampleVertex> verts = new HashSet<>();
 		if (sel != null) {

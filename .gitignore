@@ -107,6 +107,9 @@ gradle-app.setting
 # Avoid ignore Gradle wrappper properties
 !gradle-wrapper.properties
 
+# Local Codex workspace state
+.codex
+
 # Cache of project
 .gradletasknamecache
 

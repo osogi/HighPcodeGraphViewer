@@ -12,16 +12,16 @@ public class ShowHighPcodeAction extends AbstractDecompilerAction {
 	private Consumer<DecompilerActionContext> onPerform;
 
 	public ShowHighPcodeAction(Consumer<DecompilerActionContext> callback) {
-		super("Show High Pcode Graph");
+		super("Show High P-Code Graph");
 
 		onPerform = callback;
-		setPopupMenuData(new MenuData(new String[] { "Show High Pcode Graph" }));
+		setPopupMenuData(new MenuData(new String[] { "Show High P-Code Graph" }));
 		setEnabled(true);
 	}
 
 	@Override
 	protected boolean isEnabledForDecompilerContext(DecompilerActionContext context) {
-		return true;
+		return context != null && context.getHighFunction() != null;
 	}
 
 	@Override

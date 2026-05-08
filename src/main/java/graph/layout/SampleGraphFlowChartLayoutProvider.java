@@ -31,7 +31,7 @@ public class SampleGraphFlowChartLayoutProvider
 		extends AbstractLayoutProvider<SampleVertex, SampleEdge, SampleGraph> {
 
 	private static final String NAME = "Flow chart";
-	private static final Icon DEFAULT_ICON = new GIcon("icon.sample.graph.dependency.layout");
+	private static final Icon DEFAULT_ICON = new GIcon("icon.highpcode.graph.layout.flowchart");
 
 	@Override
 	public VisualGraphLayout<SampleVertex, SampleEdge> getLayout(SampleGraph g, TaskMonitor monitor)

@@ -29,7 +29,7 @@ import docking.action.*;
 import docking.menu.ActionState;
 import docking.menu.MultiStateDockingAction;
 import docking.widgets.*;
-import graph.layout.SampleGraphFlowChartLayoutProvider;
+import graph.layout.CfgFlowChartLayoutProvider;
 import ghidra.framework.plugintool.*;
 import ghidra.graph.viewer.*;
 import ghidra.graph.viewer.layout.*;
@@ -56,9 +56,9 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 	private JPanel mainPanel;
 	private JComponent component;
 
-	private SampleGraph graph;
-	private VisualGraphView<SampleVertex, SampleEdge, SampleGraph> view;
-	private LayoutProvider<SampleVertex, SampleEdge, SampleGraph> layoutProvider;
+	private CfgGraph graph;
+	private VisualGraphView<CfgVertex, CfgEdge, CfgGraph> view;
+	private LayoutProvider<CfgVertex, CfgEdge, CfgGraph> layoutProvider;
 
 	private HighFunction currentFunction;
 	@SuppressWarnings("unused")
@@ -137,10 +137,10 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 		if (currentFunction != null) {
 			try {
 				if (layoutProvider == null) {
-					layoutProvider = new SampleGraphFlowChartLayoutProvider();
+					layoutProvider = new CfgFlowChartLayoutProvider();
 				}
 				graph = GraphFactory.createGraph(currentFunction, TaskMonitor.DUMMY);
-				VisualGraphLayout<SampleVertex, SampleEdge> layout =
+				VisualGraphLayout<CfgVertex, CfgEdge> layout =
 					layoutProvider.getLayout(graph, TaskMonitor.DUMMY);
 				graph.setLayout(layout);
 			}
@@ -150,7 +150,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 		}
 	}
 
-	/* package */ SampleGraph getGraph() {
+	/* package */ CfgGraph getGraph() {
 		return graph;
 	}
 
@@ -167,21 +167,21 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 
 	private void addLayoutAction() {
 
-		MultiStateDockingAction<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> layoutAction =
+		MultiStateDockingAction<LayoutProvider<CfgVertex, CfgEdge, CfgGraph>> layoutAction =
 			new MultiStateDockingAction<>(
 				RELAYOUT_GRAPH_ACTION_NAME, plugin.getName(), KeyBindingType.SHARED) {
 
 				@Override
 				public void actionPerformed(ActionContext context) {
 					// this callback is when the user clicks the button
-					LayoutProvider<SampleVertex, SampleEdge, SampleGraph> currentUserData =
+					LayoutProvider<CfgVertex, CfgEdge, CfgGraph> currentUserData =
 						getCurrentUserData();
 					changeLayout(currentUserData);
 				}
 
 				@Override
 				public void actionStateChanged(
-						ActionState<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> newActionState,
+						ActionState<LayoutProvider<CfgVertex, CfgEdge, CfgGraph>> newActionState,
 						EventTrigger trigger) {
 					changeLayout(newActionState.getUserData());
 				}
@@ -192,7 +192,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 		addLocalAction(layoutAction);
 	}
 
-	private void changeLayout(LayoutProvider<SampleVertex, SampleEdge, SampleGraph> provider) {
+	private void changeLayout(LayoutProvider<CfgVertex, CfgEdge, CfgGraph> provider) {
 
 		this.layoutProvider = provider;
 		if (isVisible()) { // this can be called while building--ignore that
@@ -201,10 +201,10 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 	}
 
 	private void addLayoutProviders(
-			MultiStateDockingAction<LayoutProvider<SampleVertex, SampleEdge, SampleGraph>> layoutAction) {
+			MultiStateDockingAction<LayoutProvider<CfgVertex, CfgEdge, CfgGraph>> layoutAction) {
 
-		LayoutProvider<SampleVertex, SampleEdge, SampleGraph> provider =
-			new SampleGraphFlowChartLayoutProvider();
+		LayoutProvider<CfgVertex, CfgEdge, CfgGraph> provider =
+			new CfgFlowChartLayoutProvider();
 		layoutProvider = provider;
 		layoutAction.addActionState(
 			new ActionState<>(provider.getLayoutName(), provider.getActionIcon(), provider));
@@ -230,16 +230,16 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 //			return isSource;
 //		}
 
-		private static SampleGraph createGraph(HighFunction function, TaskMonitor monitor)
+		private static CfgGraph createGraph(HighFunction function, TaskMonitor monitor)
 				throws CancelledException {
 
-			BidiMap<PcodeBlockBasic, SampleVertex> vertices = createVertices(function, monitor);
+			BidiMap<PcodeBlockBasic, CfgVertex> vertices = createVertices(function, monitor);
 
-			Collection<SampleEdge> edges = createEdges(vertices, monitor);
+			Collection<CfgEdge> edges = createEdges(vertices, monitor);
 
-			SampleGraph graph = new SampleGraph(function, vertices.values(), edges);
+			CfgGraph graph = new CfgGraph(function, vertices.values(), edges);
 
-			SampleVertex functionEntryVertex =
+			CfgVertex functionEntryVertex =
 				graph.getVertexForAddress(function.getFunction().getEntryPoint());
 
 			if (functionEntryVertex == null) {
@@ -252,13 +252,13 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 			return graph;
 		}
 
-		private static Collection<SampleEdge> createEdges(
-				BidiMap<PcodeBlockBasic, SampleVertex> vertices,
+		private static Collection<CfgEdge> createEdges(
+				BidiMap<PcodeBlockBasic, CfgVertex> vertices,
 				TaskMonitor monitor) throws CancelledException {
 
-			List<SampleEdge> edges = new ArrayList<>();
-			for (SampleVertex startVertex : vertices.values()) {
-				Collection<SampleEdge> vertexEdges =
+			List<CfgEdge> edges = new ArrayList<>();
+			for (CfgVertex startVertex : vertices.values()) {
+				Collection<CfgEdge> vertexEdges =
 					getEdgesForStartVertex(vertices, startVertex, monitor);
 
 				edges.addAll(vertexEdges);
@@ -268,31 +268,31 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 		}
 
 		@SuppressWarnings("unused")
-		private static Collection<SampleEdge> getEdgesForStartVertex(
-				BidiMap<PcodeBlockBasic, SampleVertex> blockToVertexMap, SampleVertex startVertex,
+		private static Collection<CfgEdge> getEdgesForStartVertex(
+				BidiMap<PcodeBlockBasic, CfgVertex> blockToVertexMap, CfgVertex startVertex,
 				TaskMonitor monitor)
 				throws CancelledException {
 
-			List<SampleEdge> edges = new ArrayList<>();
+			List<CfgEdge> edges = new ArrayList<>();
 			PcodeBlockBasic codeBlock = blockToVertexMap.getKey(startVertex);
 
 			int outSize = codeBlock.getOutSize();
 			for (int i = 0; i < outSize; i++) {
 				PcodeBlockBasic destinationBlock = (PcodeBlockBasic) codeBlock.getOut(i);
-				SampleVertex destinationVertex = blockToVertexMap.get(destinationBlock);
+				CfgVertex destinationVertex = blockToVertexMap.get(destinationBlock);
 				if (destinationVertex == null) {
 					continue;// no vertex means the code block is not in our function
 				}
 
-				edges.add(new SampleEdge(startVertex, destinationVertex));
+				edges.add(new CfgEdge(startVertex, destinationVertex));
 			}
 			return edges;
 		}
 
 		@SuppressWarnings("unused")
-		private static BidiMap<PcodeBlockBasic, SampleVertex> createVertices(HighFunction hfunction,
+		private static BidiMap<PcodeBlockBasic, CfgVertex> createVertices(HighFunction hfunction,
 				TaskMonitor monitor) throws CancelledException {
-			BidiMap<PcodeBlockBasic, SampleVertex> vertices = new DualHashBidiMap<>();
+			BidiMap<PcodeBlockBasic, CfgVertex> vertices = new DualHashBidiMap<>();
 
 			ArrayList<PcodeBlockBasic> bbs = hfunction.getBasicBlocks();
 
@@ -304,7 +304,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 				if (adr == null) {
 					continue;
 				}
-				SampleVertex v = new SampleVertex(adr.toString(), bb);
+				CfgVertex v = new CfgVertex(adr.toString(), bb);
 				vertices.put(bb, v);
 			}
 
@@ -319,7 +319,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 			return;
 		}
 
-		HashSet<SampleVertex> verts = new HashSet<>();
+		HashSet<CfgVertex> verts = new HashSet<>();
 		if (sel != null) {
 			for (AddressRange r : sel.getAddressRanges()) {
 				verts.addAll(graph.getVerticesForRange(r));

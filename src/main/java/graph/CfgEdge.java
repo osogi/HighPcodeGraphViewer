@@ -18,18 +18,18 @@ package graph;
 import ghidra.graph.viewer.edge.AbstractVisualEdge;
 
 /**
- * An edge for the {@link SampleGraph}
+ * An edge for the {@link CfgGraph}
  */
-public class SampleEdge extends AbstractVisualEdge<SampleVertex> {
+public class CfgEdge extends AbstractVisualEdge<CfgVertex> {
 
-	public SampleEdge(SampleVertex start, SampleVertex end) {
+	public CfgEdge(CfgVertex start, CfgVertex end) {
 		super(start, end);
 	}
 
 	@SuppressWarnings("unchecked")
 	// Suppressing warning on the return type; we know our class is the right type
 	@Override
-	public SampleEdge cloneEdge(SampleVertex start, SampleVertex end) {
-		return new SampleEdge(start, end);
+	public CfgEdge cloneEdge(CfgVertex start, CfgVertex end) {
+		return new CfgEdge(start, end);
 	}
 }

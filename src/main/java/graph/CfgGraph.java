@@ -32,17 +32,17 @@ import ghidra.program.model.pcode.HighFunction;
 /**
  * A graph for the {@link HighPcodeGraphViewerPlugin} that allows for filtering
  */
-public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
+public class CfgGraph extends DefaultVisualGraph<CfgVertex, CfgEdge> {
 
-	private VisualGraphLayout<SampleVertex, SampleEdge> layout;
+	private VisualGraphLayout<CfgVertex, CfgEdge> layout;
 	private HighFunction targetHFunction;
-	private SampleVertex rootVertex;
+	private CfgVertex rootVertex;
 
-	public SampleVertex getRootVertex() {
+	public CfgVertex getRootVertex() {
 		return rootVertex;
 	}
 
-	public void setRootVertex(SampleVertex v) {
+	public void setRootVertex(CfgVertex v) {
 		rootVertex = v;
 	}
 
@@ -50,9 +50,9 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 
 		private long start;
 		private long end;
-		public SampleVertex vert;
+		public CfgVertex vert;
 
-		public VertexInterval(SampleVertex v) {
+		public VertexInterval(CfgVertex v) {
 			super();
 			start = v.startAddress.getUnsignedOffset();
 			end = v.endAddress.getUnsignedOffset() + 1;
@@ -101,41 +101,41 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 	IntervalSetTree<VertexInterval> sortedVertices;
 
 	@Override
-	protected void verticesAdded(Collection<SampleVertex> added) {
+	protected void verticesAdded(Collection<CfgVertex> added) {
 		super.verticesAdded(added);
-		for (SampleVertex v : added) {
+		for (CfgVertex v : added) {
 			sortedVertices.insert(new VertexInterval(v));
 		}
 	}
 
 	@Override
-	protected void verticesRemoved(Collection<SampleVertex> removed) {
+	protected void verticesRemoved(Collection<CfgVertex> removed) {
 		super.verticesRemoved(removed);
-		for (SampleVertex v : removed) {
+		for (CfgVertex v : removed) {
 			sortedVertices.delete(new VertexInterval(v));
 		}
 	}
 
-	public SampleGraph(HighFunction function, Set<SampleVertex> pvertices,
-			Collection<SampleEdge> pedges) {
+	public CfgGraph(HighFunction function, Set<CfgVertex> pvertices,
+			Collection<CfgEdge> pedges) {
 		super();
 		sortedVertices = new IntervalSetTree<>();
 
-		for (SampleVertex v : pvertices) {
+		for (CfgVertex v : pvertices) {
 			addVertex(v);
 		}
 
-		for (SampleEdge e : pedges) {
+		for (CfgEdge e : pedges) {
 			addEdge(e);
 		}
 
 		targetHFunction = function;
 	}
 
-	public SampleVertex getNextVertexForAddress(Address address) {
-		SampleVertex resVert = null;
+	public CfgVertex getNextVertexForAddress(Address address) {
+		CfgVertex resVert = null;
 		Address minAddr = null;
-		for (SampleVertex v : getVertices()) {
+		for (CfgVertex v : getVertices()) {
 			Address vAddr = v.hBasicBlock.getStart();
 			vAddr.compareTo(address);
 			if (vAddr.compareTo(address) > 0) {
@@ -148,13 +148,13 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 		return resVert;
 	}
 
-	public SampleVertex getVertexForAddress(Address address) {
+	public CfgVertex getVertexForAddress(Address address) {
 		return getVertexForAddress(address, Collections.emptySet());
 	}
 
-	public SampleVertex getVertexForAddress(Address address, Collection<SampleVertex> ignore) {
+	public CfgVertex getVertexForAddress(Address address, Collection<CfgVertex> ignore) {
 
-		for (SampleVertex v : getVertices()) {
+		for (CfgVertex v : getVertices()) {
 			if (v.hBasicBlock.contains(address) && !ignore.contains(v)) {
 				return v;
 			}
@@ -163,12 +163,12 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 		return null;
 	}
 
-	public HashSet<SampleVertex> getVerticesForRange(AddressRange addrRange) {
+	public HashSet<CfgVertex> getVerticesForRange(AddressRange addrRange) {
 		Iterator<VertexInterval> it = sortedVertices.overlappers(new VertexInterval(
 			addrRange.getMinAddress().getUnsignedOffset(),
 			addrRange.getMaxAddress().getUnsignedOffset()));
 
-		HashSet<SampleVertex> res = new HashSet<>();
+		HashSet<CfgVertex> res = new HashSet<>();
 		while (it.hasNext()) {
 			res.add(it.next().vert);
 		}
@@ -176,18 +176,18 @@ public class SampleGraph extends DefaultVisualGraph<SampleVertex, SampleEdge> {
 	}
 
 	@Override
-	public VisualGraphLayout<SampleVertex, SampleEdge> getLayout() {
+	public VisualGraphLayout<CfgVertex, CfgEdge> getLayout() {
 		return layout;
 	}
 
 	@Override
-	public SampleGraph copy() {
-		SampleGraph newGraph = new SampleGraph(targetHFunction, vertices.keySet(), edges.keySet());
+	public CfgGraph copy() {
+		CfgGraph newGraph = new CfgGraph(targetHFunction, vertices.keySet(), edges.keySet());
 
 		return newGraph;
 	}
 
-	void setLayout(VisualGraphLayout<SampleVertex, SampleEdge> layout) {
+	void setLayout(VisualGraphLayout<CfgVertex, CfgEdge> layout) {
 		this.layout = layout;
 	}
 }

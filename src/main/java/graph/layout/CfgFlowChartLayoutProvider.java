@@ -27,17 +27,17 @@ import ghidra.util.task.TaskMonitor;
 /**
  * A layout provider for the {@link HighPcodeGraphViewerPlugin}
  */
-public class SampleGraphFlowChartLayoutProvider
-		extends AbstractLayoutProvider<SampleVertex, SampleEdge, SampleGraph> {
+public class CfgFlowChartLayoutProvider
+		extends AbstractLayoutProvider<CfgVertex, CfgEdge, CfgGraph> {
 
 	private static final String NAME = "Flow chart";
 	private static final Icon DEFAULT_ICON = new GIcon("icon.highpcode.graph.layout.flowchart");
 
 	@Override
-	public VisualGraphLayout<SampleVertex, SampleEdge> getLayout(SampleGraph g, TaskMonitor monitor)
+	public VisualGraphLayout<CfgVertex, CfgEdge> getLayout(CfgGraph g, TaskMonitor monitor)
 			throws CancelledException {
 
-		SampleGraphFlowChartLayout layout = new SampleGraphFlowChartLayout(g);
+		CfgFlowChartLayout layout = new CfgFlowChartLayout(g);
 		initVertexLocations(g, layout);
 		return layout;
 	}

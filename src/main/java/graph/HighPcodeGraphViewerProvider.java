@@ -59,6 +59,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 	private CfgGraph graph;
 	private VisualGraphView<CfgVertex, CfgEdge, CfgGraph> view;
 	private LayoutProvider<CfgVertex, CfgEdge, CfgGraph> layoutProvider;
+	private HighFunction installedFunction;
 
 	private HighFunction currentFunction;
 	@SuppressWarnings("unused")
@@ -70,6 +71,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 		currentProgram = null;
 		currentLocation = null;
 		currentFunction = null;
+		installedFunction = null;
 		graph = null;
 	}
 
@@ -87,11 +89,17 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 	public void updateFunction(HighFunction targetFunction, Program prog) {
 		this.currentProgram = prog;
 		this.currentFunction = targetFunction;
-		installGraph();
+		if (isVisible()) {
+			installGraph(false);
+		}
 	}
 
-	private void installGraph() {
+	private void installGraph(boolean force) {
 		if (currentFunction == null) {
+			return;
+		}
+
+		if (!force && graph != null && currentFunction == installedFunction) {
 			return;
 		}
 
@@ -105,6 +113,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 		if (graph != null) {
 			view.setLayoutProvider(layoutProvider);
 			view.setGraph(graph);
+			installedFunction = currentFunction;
 		}
 	}
 
@@ -114,7 +123,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 
 	@Override
 	public void componentShown() {
-		installGraph();
+		installGraph(false);
 	}
 
 	private void buildComponent() {
@@ -196,7 +205,7 @@ public class HighPcodeGraphViewerProvider extends ComponentProviderAdapter {
 
 		this.layoutProvider = provider;
 		if (isVisible()) { // this can be called while building--ignore that
-			installGraph();
+			installGraph(true);
 		}
 	}
 
